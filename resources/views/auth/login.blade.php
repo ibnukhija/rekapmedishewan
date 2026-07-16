@@ -71,7 +71,7 @@
                 </p>
                 <div class="w-16 h-1 bg-white/50 rounded-full mb-6 mx-auto"></div>
                 <p class="text-white/80 text-sm max-w-[250px] font-semibold leading-relaxed">
-                    UPT Pusat Kesehatan Hewan.<br>Dinas Ketahanan Pangan Dan Pertanian Kota Kediri.
+                    UPT Pusat Kesehatan Hewan<br>Dinas Ketahanan Pangan Dan Pertanian Kota Kediri.
                 </p>
             </div>
         </div>
@@ -161,7 +161,6 @@
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...';
             // Hindari klik berulang
             btn.classList.add('opacity-80', 'cursor-not-allowed');
-            
             // Catatan: Tidak ada e.preventDefault() di sini agar form tetap terkirim ke Laravel
         }
     </script>

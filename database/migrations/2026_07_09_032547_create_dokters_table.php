@@ -10,8 +10,8 @@ return new class extends Migration
         Schema::create('dokter', function (Blueprint $table) {
             $table->id('id_dokter');
             $table->string('nama_dokter', 100);
-            $table->text('alamat');
-            $table->string('no_hp', 20);
+            $table->text('alamat')->nullable();
+            $table->string('no_hp', 20)->nullable();
             $table->timestamps();
         });
     }
