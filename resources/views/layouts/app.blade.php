@@ -42,6 +42,7 @@
         .sidebar-mini .profile-container { justify-content: center; padding-left: 0; padding-right: 0; }
     </style>
     @stack('styles')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans h-screen flex overflow-hidden transition-colors duration-200">

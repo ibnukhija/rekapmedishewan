@@ -21,23 +21,37 @@
     
     <!-- Alert Success -->
     @if(session('success'))
-    <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md shadow-sm mb-4">
+    <div id="alert-success" class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md shadow-sm mb-4 flex justify-between items-center transition-opacity duration-500">
         <div class="flex items-center gap-2">
             <i class="fa-solid fa-check-circle"></i>
             <p class="text-sm font-medium">{{ session('success') }}</p>
         </div>
+        <!-- Tombol Close Manual -->
+        <button onclick="closeAlert()" class="text-green-600 hover:text-green-800 focus:outline-none px-2">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
     @endif
 
     <!-- Action Bar -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+
         <!-- Search Form -->
         <form action="{{ route('dokter.index') }}" method="GET" class="relative w-full sm:w-96">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class="fa-solid fa-search text-gray-400"></i>
-            </div>
-            <input type="text" name="cari" value="{{ request('cari') }}" placeholder="Cari nama dokter..." 
-                class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm shadow-sm" onchange="this.form.submit()">
+
+            <!-- Tombol Search -->
+            <button type="submit"
+                class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 hover:text-brand-primary transition-colors">
+                <i class="fa-solid fa-search"></i>
+            </button>
+
+            <!-- Input -->
+            <input
+                type="text"
+                name="cari"
+                value="{{ request('cari') }}"
+                placeholder="Cari nama dokter..."
+                class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm shadow-sm">
         </form>
         
         <!-- Add Button -->
@@ -84,10 +98,10 @@
                                 </button>
                                 
                                 <!-- Form Hapus -->
-                                <form action="{{ route('dokter.destroy', $dokter->id_dokter) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus dokter ini?');" class="m-0 p-0">
+                                <form action="{{ route('dokter.destroy', $dokter->id_dokter) }}" method="POST" class="m-0 p-0">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 flex items-center justify-center transition-colors tooltip" title="Hapus">
+                                    <button type="button" onclick="confirmDelete(this)" class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 flex items-center justify-center transition-colors tooltip" title="Hapus">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
@@ -131,21 +145,32 @@
 
         <form id="doctorForm" action="{{ route('dokter.store') }}" method="POST" class="p-6 space-y-4">
             @csrf
-            <!-- Method field untuk update akan diinjeksi via JS saat mode Edit -->
             <div id="method-container"></div>
-            
+            <!-- Input Nama Dokter -->
             <div class="space-y-1.5">
                 <label for="nama_dokter" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Dokter <span class="text-red-500">*</span></label>
                 <input type="text" id="nama_dokter" name="nama_dokter" required placeholder="Contoh: Drh. Budi Santoso"
                     class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm">
+
+                <!-- Tampilkan error Nama -->
+                @error('nama_dokter')
+                <p class=" text-red-500 text-xs my-1">{{ $message }}</p>
+                @enderror
             </div>
 
+            <!-- Input Nomor HP -->
             <div class="space-y-1.5">
                 <label for="no_hp" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nomor HP <span class="text-red-500">*</span></label>
                 <input type="tel" id="no_hp" name="no_hp" placeholder="Contoh: 081234567890"
                     class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm">
+
+                <!-- Tampilkan error No H -->
+                @error('no_hp')
+                <p class=" text-red-500 text-xs my-1">{{ $message }}</p>
+                @enderror
             </div>
 
+            <!-- Input Alamat -->
             <div class="space-y-1.5">
                 <label for="alamat" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Alamat Lengkap</label>
                 <textarea id="alamat" name="alamat" rows="3" placeholder="Masukkan alamat lengkap dokter..."
@@ -168,6 +193,7 @@
 
 @push('scripts')
 <script>
+    const alertSuccess = document.getElementById('alert-success');
     const modal = document.getElementById('doctorModal');
     const form = document.getElementById('doctorForm');
     const modalTitleText = document.getElementById('modalTitleText');
@@ -177,6 +203,24 @@
     const storeUrl = "{{ route('dokter.store') }}";
     const updateUrlBase = "{{ url('dokter') }}"; // Base URL untuk update (/dokter/{id})
 
+    // Fungsi untuk menutup alert
+    function closeAlert() {
+        if (alertSuccess) {
+            alertSuccess.style.opacity = '0';
+            setTimeout(() => {
+                alertSuccess.style.display = 'none';
+            }, 500);
+        }
+    }
+
+    if (alertSuccess) {
+        setTimeout(() => {
+            closeAlert();
+        }, 2000);
+    }
+
+
+    // Fungsi untuk membuka modal
     function openModal(mode, data = null) {
         form.reset();
         methodContainer.innerHTML = '';
@@ -202,6 +246,7 @@
         document.getElementById('nama_dokter').focus();
     }
 
+    // Fungsi untuk menutup modal
     function closeModal() {
         modal.classList.add('modal-hidden');
         setTimeout(() => form.reset(), 300);
@@ -215,5 +260,47 @@
             btn.classList.add('opacity-80', 'cursor-not-allowed');
         }
     }
+
+    // Fungsi konfirmasi hapus
+    function confirmDelete(button) {
+    Swal.fire({
+        title: 'Apakah Anda Yakin?',
+        text: "Data dokter yang dihapus tidak dapat dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626', // red-600
+        cancelButtonColor: '#6b7280',  // gray-500
+        confirmButtonText: '<i class="fa-solid fa-trash mr-1"></i> Ya, Hapus!',
+        cancelButtonText: '<i class="fa-solid fa-xmark mr-1"></i> Batal',
+        background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
+        color: document.documentElement.classList.contains('dark') ? '#f3f4f6' : '#111827',
+        customClass: {
+            popup: 'rounded-2xl shadow-2xl',
+            confirmButton: 'px-5 py-2.5 rounded-xl font-medium tracking-wide',
+            cancelButton: 'px-5 py-2.5 rounded-xl font-medium tracking-wide'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Menampilkan efek loading pada SweetAlert
+            Swal.fire({
+                title: 'Menghapus...',
+                text: 'Mohon tunggu sebentar',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            button.closest('form').submit();
+        }
+    });
+}
+
+// Menampilkan modal otomatis saat terjadi kesalahan validasi
+@if($errors->any())
+    document.addEventListener('DOMContentLoaded', function() {
+        modal.classList.remove('modal-hidden');
+    });
+@endif
 </script>
 @endpush
