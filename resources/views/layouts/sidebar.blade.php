@@ -1,10 +1,15 @@
 <aside id="sidebar" class="bg-white dark:bg-gray-800 w-72 flex-shrink-0 border-r border-gray-200 dark:border-gray-700 flex flex-col fixed inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 z-30 shadow-lg lg:shadow-none transition-all duration-300 ease-in-out overflow-hidden">
     
-    <div class="logo-container h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700 transition-all">
-        <div class="flex items-center gap-3 text-brand-primary dark:text-brand-light w-full overflow-hidden">
-            <img class="h-12 w-auto object-contain" src="{{ asset('img/logo kota kediri.png') }}" alt="Logo">
+    <div class="logo-container h-16 flex items-center  px-6 border-b border-gray-200 dark:border-gray-700 transition-all">
+        <div class="flex items-center justify-center gap-3 text-brand-primary dark:text-brand-light w-full overflow-hidden">
+            <img class="h-16 w-auto object-contain" 
+            src="{{ asset('img/logo kota kediri.png') }}" 
+            alt="Logo Kota Kediri">
         </div>
-        <button onclick="toggleSidebar()" class="ml-auto lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex-shrink-0">
+        
+        <!-- Tombol Close (Mobile) --> 
+        <button onclick="toggleSidebar()"
+            class="absolute top-4 right-4 lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
             <i class="fa-solid fa-xmark text-xl"></i>
         </button>
     </div>
@@ -25,7 +30,7 @@
 
             <a href="#" 
             class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('rekam_medis.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
-                <i class="fa-solid fa-user-doctor w-5 text-center flex-shrink-0"></i>
+                <i class="fa-solid fa-laptop-medical w-5 text-center flex-shrink-0 group-hover:text-brand-primary dark:group-hover:text-brand-light transition-colors"></i>
                 <span class="menu-text whitespace-nowrap">Input Rekam Medis</span>
             </a>
 
@@ -39,47 +44,41 @@
                 <span class="menu-text whitespace-nowrap">Kelola Dokter</span>
             </a>
             
-            <a href="#" 
+            <a href="{{ route('paramedis.index') }}" 
             class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('paramedis.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
-                <i class="fa-solid fa-user-doctor w-5 text-center flex-shrink-0"></i>
-                <span class="menu-text whitespace-nowrap">Kelola Paramedis</span>
+                <i class="fa-solid fa-user-nurse w-5 text-center flex-shrink-0"></i>
+                <span class="menu-text whitespace-nowrap">Kelola Data Paramedis</span>
             </a>
 
-            <a href="#" 
-            class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('jenis_hewan.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
-                <i class="fa-solid fa-user-doctor w-5 text-center flex-shrink-0"></i>
+            <a href="#" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
+                <i class="fa-solid fa-cat w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Jenis Hewan</span>
             </a>
 
-            <a href="#" 
-            class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('pelayanan.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
-                <i class="fa-solid fa-user-doctor w-5 text-center flex-shrink-0"></i>
+            <a href="#" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
+                <i class="fa-solid fa-stethoscope w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Pelayanan</span>
             </a>
-            
-            <a href="#" 
-            class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('diagnosa.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
-                <i class="fa-solid fa-user-doctor w-5 text-center flex-shrink-0"></i>
+
+            <a href="#" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
+                <i class="fa-solid fa-heart-pulse w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Diagnosa</span>
             </a>
             
-            <a href="#" 
-            class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('anamnesa.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
-                <i class="fa-solid fa-user-doctor w-5 text-center flex-shrink-0"></i>
+            <a href="#" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
+                <i class="fa-solid fa-file-waveform w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Anamnesa</span>
             </a>
 
-            <a href="#" 
-            class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('obat.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
-                <i class="fa-solid fa-user-doctor w-5 text-center flex-shrink-0"></i>
+            <a href="#" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
+                <i class="fa-solid fa-pills w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Obat</span>
             </a>
 
             <p class="menu-header px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-6 whitespace-nowrap">Laporan</p>
 
-            <a href="#" 
-            class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('laporan.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
-                <i class="fa-solid fa-user-doctor w-5 text-center flex-shrink-0"></i>
+            <a href="#" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
+                <i class="fa-solid fa-file-contract w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
                 <span class="menu-text whitespace-nowrap">Rekap Laporan</span>
             </a>
         @endif

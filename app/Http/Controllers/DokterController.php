@@ -14,7 +14,7 @@ class DokterController
         if ($request->has('cari')) {
             $query->where('nama_dokter', 'like', '%' . $request->cari . '%');
         }
-        $dokters = $query->paginate(10);
+        $dokters = $query->paginate(5);
 
         return view('data_master.dokter_index', compact('dokters'));
     }
