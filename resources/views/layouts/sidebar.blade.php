@@ -14,8 +14,7 @@
         </button>
     </div>
 
-<!-- ... (Bagian atas sidebar / logo tetap sama) ... -->
-
+    <!-- ... (Bagian atas sidebar / logo tetap sama) ... -->
     <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 overflow-x-hidden">
         
         <p class="menu-header px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-4 whitespace-nowrap">Menu Utama</p>
@@ -24,7 +23,7 @@
         <a href="{{ route('dashboard') }}" 
         class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('dashboard') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}" 
         title="Dashboard">
-            <i class="fa-solid fa-chart-pie w-5 text-center flex-shrink-0"></i>
+            <i class="fa-solid fa-chart-pie w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
             <span class="menu-text whitespace-nowrap">Dashboard</span>
         </a>
 
@@ -40,13 +39,13 @@
 
             <a href="{{ route('dokter.index') }}" 
             class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('dokter.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
-                <i class="fa-solid fa-user-doctor w-5 text-center flex-shrink-0"></i>
+                <i class="fa-solid fa-user-doctor w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Dokter</span>
             </a>
             
             <a href="{{ route('paramedis.index') }}" 
             class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('paramedis.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
-                <i class="fa-solid fa-user-nurse w-5 text-center flex-shrink-0"></i>
+                <i class="fa-solid fa-user-nurse w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Data Paramedis</span>
             </a>
 
@@ -60,7 +59,8 @@
                 <span class="menu-text whitespace-nowrap">Kelola Pelayanan</span>
             </a>
 
-            <a href="#" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
+            <a href="{{ route('diagnosa.index') }}" 
+            class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('diagnosa.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}"">
                 <i class="fa-solid fa-heart-pulse w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Diagnosa</span>
             </a>
