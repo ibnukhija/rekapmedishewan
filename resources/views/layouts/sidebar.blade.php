@@ -63,12 +63,12 @@
                 <span class="menu-text whitespace-nowrap">Kelola Diagnosa</span>
             </a>
             
-            <a href="#" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
+            <a href="{{ route('anamnesa.index') }}" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
                 <i class="fa-solid fa-file-waveform w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Anamnesa</span>
             </a>
 
-            <a href="#" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
+            <a href="{{ route('obat.index') }}" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
                 <i class="fa-solid fa-pills w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Obat</span>
             </a>
