@@ -1,14 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Data Dokter - Klinik Hewan Satwa Sehat')
-@section('page_title', 'Kelola Data Dokter')
+@section('title', 'Kelola Data Diagnosa - Klinik Hewan Satwa Sehat')
+@section('page_title', 'Kelola Data Diagnosa')
 
 @push('styles')
 <style>
-    .form-input-focus:focus {
-        box-shadow: 0 0 0 2px rgba(64, 145, 108, 0.2);
-    }
-    /* Modal Animation */
+    .form-input-focus:focus { box-shadow: 0 0 0 2px rgba(64, 145, 108, 0.2); }
     .modal-overlay { backdrop-filter: blur(4px); transition: opacity 0.3s ease, visibility 0.3s ease; }
     .modal-content { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease; }
     .modal-hidden { opacity: 0; visibility: hidden; }
@@ -19,14 +16,13 @@
 @section('content')
 <div class="max-w-6xl mx-auto space-y-6">
     
-    <!-- Alert Success -->
+    <!-- Alert Success Auto-Hide -->
     @if(session('success'))
     <div id="alert-success" class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md shadow-sm mb-4 flex justify-between items-center transition-opacity duration-500">
         <div class="flex items-center gap-2">
             <i class="fa-solid fa-check-circle"></i>
             <p class="text-sm font-medium">{{ session('success') }}</p>
         </div>
-        <!-- Tombol Close Manual -->
         <button onclick="closeAlert()" class="text-green-600 hover:text-green-800 focus:outline-none px-2">
             <i class="fa-solid fa-xmark"></i>
         </button>
@@ -35,9 +31,9 @@
 
     <!-- Action Bar -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-
-        <!-- Search Form -->
-        <form action="{{ route('dokter.index') }}" method="GET" class="relative w-full sm:w-96">
+        
+    <!-- Search Form -->
+        <form action="{{ route('diagnosa.index') }}" method="GET" class="relative w-full sm:w-96">
 
             <!-- Tombol Search -->
             <button type="submit"
@@ -50,14 +46,14 @@
                 type="text"
                 name="cari"
                 value="{{ request('cari') }}"
-                placeholder="Cari nama dokter..."
+                placeholder="Cari nama diagnosa..."
                 class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm shadow-sm">
         </form>
-        
+
         <!-- Add Button -->
         <button onclick="openModal('add')" class="w-full sm:w-auto bg-brand-primary hover:bg-brand-dark text-white font-medium py-2.5 px-5 rounded-xl shadow-lg shadow-brand-primary/20 transform hover:-translate-y-0.5 transition-all duration-200 flex justify-center items-center gap-2 text-sm">
             <i class="fa-solid fa-plus"></i>
-            <span>Tambah Dokter</span>
+            <span>Tambah Diagnosa</span>
         </button>
     </div>
 
@@ -67,38 +63,32 @@
             <table class="w-full text-left text-sm text-gray-600 dark:text-gray-400">
                 <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 font-semibold border-b border-gray-200 dark:border-gray-700">
                     <tr>
-                        <th class="px-6 py-4 whitespace-nowrap w-24">ID</th>
-                        <th class="px-6 py-4 whitespace-nowrap">Nama Dokter</th>
-                        <th class="px-6 py-4 whitespace-nowrap">No. HP</th>
-                        <th class="px-6 py-4 min-w-[250px]">Alamat</th>
+                        <th class="px-6 py-4 whitespace-nowrap w-24">No</th>
+                        <th class="px-6 py-4 whitespace-nowrap">Nama Diagnosa</th>
                         <th class="px-6 py-4 whitespace-nowrap text-center w-32">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     
-                    @forelse ($dokters as $index => $dokter)
+                    @forelse ($dataDiagnosa as $index => $item)
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-colors group">
                         <td class="px-6 py-4">
                             <span class="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md text-xs font-mono">
-                                {{ $dokters->firstItem() + $index }}
+                                {{ $dataDiagnosa->firstItem() + $index }}
                             </span>
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                            <div class="flex items-center gap-3">
-                                {{ $dokter->nama_dokter }}
-                            </div>
+                            {{ $item->nama_diagnosa }}
                         </td>
-                        <td class="px-6 py-4">{{ $dokter->no_hp ?? '-' }}</td>
-                        <td class="px-6 py-4 line-clamp-2 mt-1 border-0">{{ $dokter->alamat ?? '-' }}</td>
                         <td class="px-6 py-4">
                             <div class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <!-- Tombol Edit -->
-                                <button onclick="openModal('edit', {{ $dokter }})" class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 flex items-center justify-center transition-colors tooltip" title="Edit">
+                                <button onclick="openModal('edit', {{ json_encode($item) }})" class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 flex items-center justify-center transition-colors tooltip" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
                                 
-                                <!-- Form Hapus -->
-                                <form action="{{ route('dokter.destroy', $dokter->id_dokter) }}" method="POST" class="m-0 p-0">
+                                <!-- Form Hapus dengan SweetAlert -->
+                                <form action="{{ route('diagnosa.destroy', $item->id_diagnosa) }}" method="POST" class="m-0 p-0">
                                     @csrf
                                     @method('DELETE')
                                     <button type="button" onclick="confirmDelete(this)" class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 flex items-center justify-center transition-colors tooltip" title="Hapus">
@@ -112,7 +102,7 @@
                     <tr>
                         <td colspan="5" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                             <i class="fa-solid fa-folder-open text-4xl mb-3 opacity-50"></i>
-                            <p>Belum ada data dokter.</p>
+                            <p>Belum ada data diagnosa.</p>
                         </td>
                     </tr>
                     @endforelse
@@ -120,31 +110,30 @@
                 </tbody>
             </table>
         </div>
-        
         <!-- Custom Pagination -->
         <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50/50 dark:bg-gray-800/50">
             
             <!-- Informasi Data -->
             <span class="text-sm text-gray-500 dark:text-gray-400">
-                Menampilkan {{ $dokters->firstItem() ?? 0 }} hingga {{ $dokters->lastItem() ?? 0 }} dari {{ $dokters->total() }} data
+                Menampilkan {{ $dataDiagnosa->firstItem() ?? 0 }} hingga {{ $dataDiagnosa->lastItem() ?? 0 }} dari {{ $dataDiagnosa->total() }} data
             </span>
 
             <!-- Tombol Navigasi -->
             <div class="flex items-center gap-1">
                 
                 <!-- Tombol Sebelumnya -->
-                @if ($dokters->onFirstPage())
+                @if ($dataDiagnosa->onFirstPage())
                     <button disabled class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-400 cursor-not-allowed bg-white dark:bg-gray-800">Sebelumnya</button>
                 @else
-                    <a href="{{ $dokters->previousPageUrl() }}" class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 transition-colors">Sebelumnya</a>
+                    <a href="{{ $dataDiagnosa->previousPageUrl() }}" class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 transition-colors">Sebelumnya</a>
                 @endif
 
                 <!-- Tombol Halaman Saat Ini -->
-                <button class="px-3 py-1 border border-brand-primary bg-brand-primary/10 text-brand-primary font-medium rounded-lg text-sm">{{ $dokters->currentPage() }}</button>
+                <button class="px-3 py-1 border border-brand-primary bg-brand-primary/10 text-brand-primary font-medium rounded-lg text-sm">{{ $dataDiagnosa->currentPage() }}</button>
 
                 <!-- Tombol Selanjutnya -->
-                @if ($dokters->hasMorePages())
-                    <a href="{{ $dokters->nextPageUrl() }}" class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 transition-colors">Selanjutnya</a>
+                @if ($dataDiagnosa->hasMorePages())
+                    <a href="{{ $dataDiagnosa->nextPageUrl() }}" class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 transition-colors">Selanjutnya</a>
                 @else
                     <button disabled class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-400 cursor-not-allowed bg-white dark:bg-gray-800">Selanjutnya</button>
                 @endif
@@ -154,56 +143,37 @@
     </div>
 </div>
 
-<!-- Modal Form (Tambah/Edit Dokter) -->
-<div id="doctorModal" class="modal-hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+<!-- Modal Form (Tambah/Edit Diagnosa) -->
+<div id="diagnosaModal" class="modal-hidden fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="modal-overlay absolute inset-0 bg-gray-900/60" onclick="closeModal()"></div>
     
     <div class="modal-content relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100 dark:border-gray-700">
         
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/50">
             <h3 id="modalTitle" class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-user-doctor text-brand-primary"></i>
-                <span id="modalTitleText">Tambah Data Dokter</span>
+                <i class="fa-solid fa-user-nurse text-brand-primary"></i>
+                <span id="modalTitleText">Tambah Data Diagnosa</span>
             </h3>
             <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
 
-        <form id="doctorForm" action="{{ route('dokter.store') }}" method="POST" class="p-6 space-y-4">
+        <form id="diagnosaForm" action="{{ route('diagnosa.store') }}" method="POST" class="p-6 space-y-4">
             @csrf
             <div id="method-container"></div>
-            <!-- Input Nama Dokter -->
+            
+            <!-- Input Nama Diagnosa -->
             <div class="space-y-1.5">
-                <label for="nama_dokter" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Dokter <span class="text-red-500">*</span></label>
-                <input type="text" id="nama_dokter" name="nama_dokter" required placeholder="Contoh: Drh. Budi Santoso"
+                <label for="nama_diagnosa" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Diagnosa<span class="text-red-500">*</span></label>
+                <input type="text" id="nama_diagnosa" name="nama_diagnosa" value="{{ old('nama_diagnosa') }}" placeholder="Contoh: Penyakit Jantung"
                     class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm">
-
-                <!-- Tampilkan error Nama -->
-                @error('nama_dokter')
-                <p class=" text-red-500 text-xs my-1">{{ $message }}</p>
+                @error('nama_diagnosa')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
-            <!-- Input Nomor HP -->
-            <div class="space-y-1.5">
-                <label for="no_hp" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nomor HP <span class="text-red-500">*</span></label>
-                <input type="tel" id="no_hp" name="no_hp" placeholder="Contoh: 081234567890"
-                    class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm">
-
-                <!-- Tampilkan error No H -->
-                @error('no_hp')
-                <p class=" text-red-500 text-xs my-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!-- Input Alamat -->
-            <div class="space-y-1.5">
-                <label for="alamat" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Alamat Lengkap</label>
-                <textarea id="alamat" name="alamat" rows="3" placeholder="Masukkan alamat lengkap dokter..."
-                    class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm resize-none"></textarea>
-            </div>
-
+            <!-- Footer Actions -->
             <div class="pt-4 mt-2 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
                 <button type="button" onclick="closeModal()" class="px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium">
                     Batal
@@ -220,57 +190,33 @@
 
 @push('scripts')
 <script>
-    const alertSuccess = document.getElementById('alert-success');
-    const modal = document.getElementById('doctorModal');
-    const form = document.getElementById('doctorForm');
+    // --- MODAL & FORM LOGIC ---
+    const modal = document.getElementById('diagnosaModal');
+    const form = document.getElementById('diagnosaForm');
     const modalTitleText = document.getElementById('modalTitleText');
     const methodContainer = document.getElementById('method-container');
     
-    // Konfigurasi route Laravel untuk dipanggil di Javascript
-    const storeUrl = "{{ route('dokter.store') }}";
-    const updateUrlBase = "{{ url('dokter') }}"; // Base URL untuk update (/dokter/{id})
-
-    // Fungsi untuk menutup alert
-    function closeAlert() {
-        if (alertSuccess) {
-            alertSuccess.style.opacity = '0';
-            setTimeout(() => {
-                alertSuccess.style.display = 'none';
-            }, 500);
-        }
-    }
-
-    if (alertSuccess) {
-        setTimeout(() => {
-            closeAlert();
-        }, 2000);
-    }
-
+    const storeUrl = "{{ route('diagnosa.store') }}";
+    const updateUrlBase = "{{ url('diagnosa') }}";
 
     // Fungsi untuk membuka modal
     function openModal(mode, data = null) {
         form.reset();
-        methodContainer.innerHTML = '';
+        methodContainer.innerHTML = ''; 
         
         if (mode === 'edit' && data) {
-            modalTitleText.textContent = 'Edit Data Dokter';
-            // Set action form ke URL Update
-            form.action = updateUrlBase + '/' + data.id_dokter;
-            // Inject method PUT untuk Laravel
+            modalTitleText.textContent = 'Edit Data Diagnosa';
+            form.action = updateUrlBase + '/' + data.id_diagnosa;
             methodContainer.innerHTML = '@method("PUT")';
             
-            // Isi form dengan data yang dipilih
-            document.getElementById('nama_dokter').value = data.nama_dokter;
-            document.getElementById('no_hp').value = data.no_hp;
-            document.getElementById('alamat').value = data.alamat || '';
+            document.getElementById('nama_diagnosa').value = data.nama_diagnosa;
         } else {
-            modalTitleText.textContent = 'Tambah Data Dokter';
-            // Set action form ke URL Store
+            modalTitleText.textContent = 'Tambah Data Diagnosa';
             form.action = storeUrl;
         }
         
         modal.classList.remove('modal-hidden');
-        document.getElementById('nama_dokter').focus();
+        document.getElementById('nama_diagnosa').focus();
     }
 
     // Fungsi untuk menutup modal
@@ -279,7 +225,7 @@
         setTimeout(() => form.reset(), 300);
     }
 
-    // Efek loading saat tombol submit ditekan
+    // Fungsi untuk menampilkan loading
     function showLoading(btn) {
         if(form.checkValidity()) {
             const originalContent = btn.innerHTML;
@@ -290,44 +236,54 @@
 
     // Fungsi konfirmasi hapus
     function confirmDelete(button) {
-    Swal.fire({
-        title: 'Apakah Anda Yakin?',
-        text: "Data dokter yang dihapus tidak dapat dikembalikan!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc2626', // red-600
-        cancelButtonColor: '#6b7280',  // gray-500
-        confirmButtonText: '<i class="fa-solid fa-trash mr-1"></i> Ya, Hapus!',
-        cancelButtonText: '<i class="fa-solid fa-xmark mr-1"></i> Batal',
-        background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
-        color: document.documentElement.classList.contains('dark') ? '#f3f4f6' : '#111827',
-        customClass: {
-            popup: 'rounded-2xl shadow-2xl',
-            confirmButton: 'px-5 py-2.5 rounded-xl font-medium tracking-wide',
-            cancelButton: 'px-5 py-2.5 rounded-xl font-medium tracking-wide'
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Menampilkan efek loading pada SweetAlert
-            Swal.fire({
-                title: 'Menghapus...',
-                text: 'Mohon tunggu sebentar',
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-            button.closest('form').submit();
-        }
-    });
-}
+        Swal.fire({
+            title: 'Apakah Anda Yakin?',
+            text: "Data diagnosa yang dihapus tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: '<i class="fa-solid fa-trash mr-1"></i> Ya, Hapus!',
+            cancelButtonText: '<i class="fa-solid fa-xmark mr-1"></i> Batal',
+            background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
+            color: document.documentElement.classList.contains('dark') ? '#f3f4f6' : '#111827',
+            customClass: {
+                popup: 'rounded-2xl shadow-2xl',
+                confirmButton: 'px-5 py-2.5 rounded-xl font-medium tracking-wide',
+                cancelButton: 'px-5 py-2.5 rounded-xl font-medium tracking-wide'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Menghapus...',
+                    text: 'Mohon tunggu sebentar',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => { Swal.showLoading(); }
+                });
+                button.closest('form').submit();
+            }
+        });
+    }
 
-// Menampilkan modal otomatis saat terjadi kesalahan validasi
-@if($errors->any())
-    document.addEventListener('DOMContentLoaded', function() {
-        modal.classList.remove('modal-hidden');
-    });
-@endif
+    // Otomatis menutup alert
+    const alertSuccess = document.getElementById('alert-success');
+    function closeAlert() {
+        if (alertSuccess) {
+            alertSuccess.style.opacity = '0';
+            setTimeout(() => { alertSuccess.style.display = 'none'; }, 500);
+        }
+    }
+    if (alertSuccess) {
+        setTimeout(() => { closeAlert(); }, 2000); 
+    }
+
+    // --- AUTO-OPEN MODAL ON ERROR ---
+    const adaError = {{ $errors->any() ? 'true' : 'false' }};
+    if (adaError) {
+        document.addEventListener("DOMContentLoaded", function() {
+            modal.classList.remove('modal-hidden');
+        });
+    }
 </script>
 @endpush

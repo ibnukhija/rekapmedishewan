@@ -29,7 +29,7 @@
         <div class="grid grid-cols-2 gap-4 mt-6">
             <div class="flex items-start gap-3">
                 <i class="fa-solid fa-location-dot text-brand-primary text-xl mt-1"></i>
-                <span class="text-sm">Jl. Brigadier General Pol. Imam Bachri No. 98 A, Bangsal, Kec. Pesantren, Kab. Kediri.</span>
+                <span class="text-sm">Jl. Brigadir Jenderal Polisi Imam Bachri No. 98A, Bangsal, Kec. Pesantren, Kab. Kediri.</span>
             </div>
             <div class="flex items-start gap-3">
                 <i class="fa-solid fa-clock text-brand-primary text-xl mt-1"></i>
@@ -96,7 +96,7 @@
             </div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium leading-tight">Dokter Jaga</p>
         </div>
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white pl-1 truncate" title="drh. Ahmad Fauzan">0</h3>
+        <h3 class="text-lg font-bold text-gray-900 dark:text-white pl-1 truncate">{{ $totalDokter }}</h3>
     </div>
 
 </div>

@@ -10,6 +10,7 @@ use App\Http\Controllers\JenisHewanController;
 use App\Http\Controllers\DiagnosaController;
 use App\Http\Controllers\AnamnesaController;
 use App\Http\Controllers\ObatController;
+use App\Models\Dokter;
 
 
 // Route untuk Halaman Auth
@@ -23,7 +24,8 @@ Route::middleware('auth')->group(function () {
     
     // DIAKSES ADMIN & OPERATOR
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        $totalDokter = Dokter::count();
+        return view('dashboard', compact('totalDokter'));
     })->name('dashboard');
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
