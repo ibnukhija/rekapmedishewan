@@ -12,7 +12,7 @@ use App\Http\Controllers\AnamnesaController;
 use App\Http\Controllers\ObatController;
 use App\Models\Dokter;
 
-
+Route::redirect('/', '/login');
 // Route untuk Halaman Auth
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -27,10 +27,14 @@ Route::middleware('auth')->group(function () {
         $totalDokter = Dokter::count();
         return view('dashboard', compact('totalDokter'));
     })->name('dashboard');
+
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Modul Transaksi (Akses Operator & Admin)
+    Route::get('/rekam-medis/search', [RekamMedisController::class, 'search'])->name('rekam-medis.search');
+    
+    // Standar resource controller
     Route::resource('rekam-medis', RekamMedisController::class);
 
     // HANYA BISA DIAKSES ADMIN ---

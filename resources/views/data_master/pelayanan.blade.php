@@ -65,8 +65,9 @@
                     <tr>
                         <th class="px-6 py-4 whitespace-nowrap w-24">ID</th>
                         <th class="px-6 py-4 whitespace-nowrap">Nama Pelayanan / Tindakan</th>
+                        <th class="px-6 py-4 whitespace-nowrap">Berlaku Untuk</th>
                         <th class="px-6 py-4 whitespace-nowrap">Tarif (Rp)</th>
-                        <th class="px-6 py-4 min-w-[250px]">Keterangan</th>
+                        <th class="px-6 py-4 min-w-[220px]">Keterangan</th>
                         <th class="px-6 py-4 whitespace-nowrap text-center w-32">Aksi</th>
                     </tr>
                 </thead>
@@ -85,6 +86,24 @@
                                     <i class="fa-solid fa-stethoscope text-sm"></i>
                                 </div>
                                 {{ $pelayanan->nama_pelayanan }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex flex-wrap gap-1.5">
+                                @if($pelayanan->id_jenis)
+                                    <span class="px-2.5 py-1 bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 rounded-full text-xs font-medium">
+                                        {{ $pelayanan->jenisHewan->nama_jenis ?? '-' }}
+                                    </span>
+                                @else
+                                    <span class="px-2.5 py-1 bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400 rounded-full text-xs font-medium">
+                                        Semua Jenis
+                                    </span>
+                                @endif
+                                @if($pelayanan->jenis_kelamin)
+                                    <span class="px-2.5 py-1 bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400 rounded-full text-xs font-medium">
+                                        {{ $pelayanan->jenis_kelamin }}
+                                    </span>
+                                @endif
                             </div>
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
@@ -117,7 +136,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                        <td colspan="6" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                             <i class="fa-solid fa-briefcase-medical text-4xl mb-3 opacity-50"></i>
                             <p>Belum ada data pelayanan.</p>
                         </td>
@@ -165,6 +184,28 @@
                 <label for="nama_pelayanan" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Pelayanan / Tindakan <span class="text-red-500">*</span></label>
                 <input type="text" id="nama_pelayanan" name="nama_pelayanan" required placeholder="Contoh: Vaksinasi, Operasi, dll"
                     class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Boleh membuat nama yang sama lebih dari sekali jika tarifnya berbeda per jenis hewan / kelamin (mis. "Steril" untuk Jantan & Betina dibuat 2 baris terpisah).</p>
+            </div>
+
+            <!-- Jenis Hewan & Jenis Kelamin -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                    <label for="id_jenis" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berlaku untuk Jenis</label>
+                    <select id="id_jenis" name="id_jenis" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm appearance-none cursor-pointer">
+                        <option value="">-- Semua Jenis Hewan --</option>
+                        @foreach($jenisHewans as $jenis)
+                            <option value="{{ $jenis->id_jenis }}">{{ $jenis->nama_jenis }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="space-y-1.5">
+                    <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berlaku untuk Kelamin</label>
+                    <select id="jenis_kelamin" name="jenis_kelamin" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm appearance-none cursor-pointer">
+                        <option value="">-- Semua / Tidak Berlaku --</option>
+                        <option value="Jantan">Jantan</option>
+                        <option value="Betina">Betina</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Tarif -->
@@ -226,6 +267,8 @@
             
             // Isi form dengan data yang dipilih
             document.getElementById('nama_pelayanan').value = data.nama_pelayanan;
+            document.getElementById('id_jenis').value = data.id_jenis ?? '';
+            document.getElementById('jenis_kelamin').value = data.jenis_kelamin ?? '';
             document.getElementById('tarif').value = data.tarif;
             document.getElementById('keterangan').value = data.keterangan;
         } else {

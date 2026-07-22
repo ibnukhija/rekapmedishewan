@@ -37,7 +37,7 @@ class PelayananController extends Controller
         $validated = $request->validate([
             'nama_pelayanan' => 'required|string|max:100',
             'id_jenis'       => 'nullable|exists:jenis_hewan,id_jenis',
-            'jenis_kelamin'  => 'nullable|in:jantan,betina',
+            'jenis_kelamin' => 'nullable|in:Jantan,Betina',
             'tarif'          => 'required|numeric|min:0',
             'keterangan'     => 'nullable|string|max:255',
         ], [
@@ -73,7 +73,7 @@ class PelayananController extends Controller
         $validated = $request->validate([
             'nama_pelayanan' => 'required|string|max:100',
             'id_jenis'       => 'nullable|exists:jenis_hewan,id_jenis',
-            'jenis_kelamin'  => 'nullable|in:jantan,betina',
+            'jenis_kelamin' => 'nullable|in:Jantan,Betina',
             'tarif'          => 'required|numeric|min:0',
             'keterangan'     => 'nullable|string|max:255',
         ], [
