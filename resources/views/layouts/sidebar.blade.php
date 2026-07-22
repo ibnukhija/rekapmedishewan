@@ -16,8 +16,9 @@
         <p class="menu-header px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-4 whitespace-nowrap">Menu Utama</p>
         
         <!-- MENU PUBLIK: Bisa diakses Admin & Operator -->
-        <a href="{{ route('dashboard') }}" class="menu-link flex items-center gap-3 px-3 py-2.5 bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light rounded-lg transition-colors group font-medium" title="Dashboard">
-            <i class="fa-solid fa-chart-pie w-5 text-center flex-shrink-0"></i>
+        <a href="{{ route('dashboard') }}" 
+            class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('dashboard') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50' }}" title="Dashboard">
+            <i class="fa-solid fa-chart-pie w-5 text-center flex-shrink-0 {{ request()->routeIs('dashboard') ? '' : 'group-hover:text-brand-primary' }}"></i>
             <span class="menu-text whitespace-nowrap">Dashboard</span>
         </a>
 
@@ -30,8 +31,9 @@
         @if (Auth::user()->role === 'admin')
             <p class="menu-header px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-6 whitespace-nowrap">Data Master</p>
 
-            <a href="{{ route('dokter.index') }}" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
-                <i class="fa-solid fa-user-doctor w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
+            <a href="{{ route('dokter.index') }}" 
+                class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('dokter.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50' }}">
+                <i class="fa-solid fa-user-doctor w-5 text-center flex-shrink-0 {{ request()->routeIs('dokter.*') ? '' : 'group-hover:text-brand-primary' }}"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Dokter</span>
             </a>
             
@@ -40,13 +42,15 @@
                 <span class="menu-text whitespace-nowrap">Kelola Paramedis</span>
             </a>
 
-            <a href="#" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
-                <i class="fa-solid fa-cat w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
+            <a href="{{ route('jenis_hewan.index') }}" 
+                class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('jenis_hewan.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50' }}">
+                <i class="fa-solid fa-cat w-5 text-center flex-shrink-0 {{ request()->routeIs('jenis_hewan.*') ? '' : 'group-hover:text-brand-primary' }}"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Jenis Hewan</span>
             </a>
 
-            <a href="#" class="menu-link flex items-center gap-3 px-3 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-colors group">
-                <i class="fa-solid fa-stethoscope w-5 text-center flex-shrink-0 group-hover:text-brand-primary"></i>
+            <a href="{{ route('pelayanan.index') }}" 
+                class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('pelayanan.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50' }}">
+                <i class="fa-solid fa-stethoscope w-5 text-center flex-shrink-0 {{ request()->routeIs('pelayanan.*') ? '' : 'group-hover:text-brand-primary' }}"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Pelayanan</span>
             </a>
             

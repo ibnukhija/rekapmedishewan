@@ -11,6 +11,7 @@ use App\Http\Controllers\DiagnosaController;
 use App\Http\Controllers\AnamnesaController;
 use App\Http\Controllers\ObatController;
 
+
 // Route untuk Halaman Auth
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -34,8 +35,13 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::resource('dokter', DokterController::class);
         Route::resource('paramedis', ParamedisController::class);
-        Route::resource('pelayanan', PelayananController::class);
-        Route::resource('jenis-hewan', JenisHewanController::class);
+        Route::resource('pelayanan', PelayananController::class)
+            ->parameters(['pelayanan' => 'id_pelayanan'])
+            ->except(['show', 'create', 'edit']);
+        Route::resource('jenis-hewan', JenisHewanController::class)
+            ->parameters(['jenis-hewan' => 'id_jenis'])
+            ->names('jenis_hewan')
+            ->except(['show', 'create', 'edit']);
         Route::resource('diagnosa', DiagnosaController::class);
         Route::resource('anamnesa', AnamnesaController::class);
         Route::resource('obat', ObatController::class);
