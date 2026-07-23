@@ -12,6 +12,7 @@ use App\Models\Paramedis;
 use App\Models\Pelayanan;
 use App\Models\JenisHewan;
 use App\Exports\RekapLaporanExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Diagnosa;
 use App\Models\Anamnesa;
@@ -290,5 +291,121 @@ class RekamMedisController extends Controller
     public function exportRekapLaporan(Request $request)
     {
         return Excel::download(new RekapLaporanExport($request->all()), 'rekap-laporan-' . now()->format('Ymd_His') . '.xlsx');
+    }
+    
+    public function cetakRekapLaporan(Request $request)
+    {
+        $search = $request->filled('search') ? $request->search : $request->q;
+        $dokter = $request->filled('id_dokter') ? $request->id_dokter : $request->dokter;
+        $jenisHewan = $request->filled('id_jenis') ? $request->id_jenis : $request->jenis_hewan;
+        $pelayanan = $request->filled('id_pelayanan') ? $request->id_pelayanan : $request->pelayanan;
+        $diagnosa = $request->filled('id_diagnosa') ? $request->id_diagnosa : $request->diagnosa;
+        $jenisKelamin = $request->filled('jenis_kelamin') ? $request->jenis_kelamin : null;
+        $tanggalMulai = $request->filled('tanggal_mulai') ? $request->tanggal_mulai : $request->start_date;
+        $tanggalAkhir = $request->filled('tanggal_akhir') ? $request->tanggal_akhir : $request->end_date;
+        $tahun = $request->filled('tahun') ? $request->tahun : $request->year;
+
+        $query = RekamMedis::with([
+            'hewan.pemilik',
+            'hewan.jenisHewan',
+            'dokter',
+            'paramedis',
+            'pelayanan',
+            'diagnosa',
+            'anamnesas',
+            'obats',
+        ]);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('no_karcis', 'like', "%{$search}%")
+                    ->orWhereHas('hewan', fn($q2) => $q2->where('nama_hewan', 'like', "%{$search}%"))
+                    ->orWhereHas('hewan.pemilik', fn($q2) => $q2->where('nama_pemilik', 'like', "%{$search}%"))
+                    ->orWhereHas('diagnosa', fn($q2) => $q2->where('nama_diagnosa', 'like', "%{$search}%"));
+            });
+        }
+
+        if ($dokter) {
+            $query->where('id_dokter', $dokter);
+        }
+
+        if ($jenisHewan) {
+            $query->whereHas('hewan', fn($q) => $q->where('id_jenis', $jenisHewan));
+        }
+
+        if ($pelayanan) {
+            $query->where('id_pelayanan', $pelayanan);
+        }
+
+        if ($diagnosa) {
+            $query->where('id_diagnosa', $diagnosa);
+        }
+
+        if ($jenisKelamin) {
+            $query->whereHas('hewan', fn($q) => $q->where('jenis_kelamin', $jenisKelamin));
+        }
+
+        if ($tanggalMulai) {
+            $query->whereDate('tanggal', '>=', $tanggalMulai);
+        }
+
+        if ($tanggalAkhir) {
+            $query->whereDate('tanggal', '<=', $tanggalAkhir);
+        }
+
+        if ($tahun && !$tanggalMulai && !$tanggalAkhir) {
+            $query->whereYear('tanggal', $tahun);
+        }
+
+        $rekapData = $query->orderBy('tanggal', 'desc')->get();
+
+        $totalEntri = $rekapData->count();
+        $totalRetribusi = $rekapData->sum(fn($item) => $item->pelayanan?->tarif ?? 0);
+        $totalHewanUnik = $rekapData->pluck('id_hewan')->unique()->count();
+
+        $filterInfo = [];
+
+        if ($tanggalMulai || $tanggalAkhir) {
+            $filterInfo['Periode'] =
+                ($tanggalMulai ? \Carbon\Carbon::parse($tanggalMulai)->translatedFormat('d F Y') : 'Awal data')
+                . ' s/d '
+                . ($tanggalAkhir ? \Carbon\Carbon::parse($tanggalAkhir)->translatedFormat('d F Y') : 'sekarang');
+        } elseif ($tahun) {
+            $filterInfo['Tahun'] = $tahun;
+        }
+
+        if ($search) {
+            $filterInfo['Kata Kunci'] = $search;
+        }
+        if ($dokter) {
+            $filterInfo['Dokter'] = Dokter::find($dokter)?->nama_dokter ?? '-';
+        }
+        if ($jenisHewan) {
+            $filterInfo['Jenis Hewan'] = JenisHewan::find($jenisHewan)?->nama_jenis ?? '-';
+        }
+        if ($pelayanan) {
+            $filterInfo['Pelayanan'] = Pelayanan::find($pelayanan)?->nama_pelayanan ?? '-';
+        }
+        if ($diagnosa) {
+            $filterInfo['Diagnosa'] = Diagnosa::find($diagnosa)?->nama_diagnosa ?? '-';
+        }
+        if ($jenisKelamin) {
+            $filterInfo['Jenis Kelamin'] = $jenisKelamin;
+        }
+
+        $pdf = Pdf::setOptions(['isPhpEnabled' => true])
+            ->loadView('export.pdf_rekap_laporan', compact(
+                'rekapData',
+                'totalEntri',
+                'totalRetribusi',
+                'totalHewanUnik',
+                'filterInfo'
+            ))
+            ->setPaper('a4', 'landscape');
+
+        return response($pdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="rekap-laporan-' . now()->format('Ymd_His') . '.pdf"',
+        ]);
     }
 }

@@ -68,6 +68,12 @@
                         <span>Excel</span>
                     </a>
 
+                    <a href="{{ route('rekap-laporan.pdf', request()->query()) }}"
+                        class="bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-2 flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        PDF
+                    </a>
+
                 </div>
 
             <div id="filter-more-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-4 py-6">

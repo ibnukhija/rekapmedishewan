@@ -3,10 +3,13 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Illuminate\Support\Collection;
 use App\Models\RekamMedis;
 
-class RekapLaporanExport implements FromCollection
+class RekapLaporanExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize
 {
     protected array $filters;
 
@@ -30,31 +33,52 @@ class RekapLaporanExport implements FromCollection
 
         $this->applyFilters($query, $this->filters);
 
-        return $query->orderBy('tanggal', 'desc')
-            ->get()
-            ->map(function ($item) {
-                $tanggal = \Carbon\Carbon::parse($item->tanggal);
-                if ($tanggal->format('H:i:s') === '00:00:00' && $item->created_at) {
-                    $tanggal = $tanggal->setTime($item->created_at->hour, $item->created_at->minute, $item->created_at->second);
-                }
+        return $query->orderBy('tanggal', 'desc')->get();
+    }
 
-                return [
-                    'tanggal' => $tanggal->translatedFormat('d/m/Y H:i:s'),
-                    'nama_pemilik' => $item->hewan?->pemilik?->nama_pemilik ?? '-',
-                    'alamat' => $item->hewan?->pemilik?->alamat ?? '-',
-                    'nama_hewan' => $item->hewan?->nama_hewan ?? '-',
-                    'jenis_hewan' => $item->hewan?->jenisHewan?->nama_jenis ?? '-',
-                    'kelamin' => $item->hewan?->jenis_kelamin ?? '-',
-                    'anamnesa' => $item->anamnesas->pluck('nama_anamnesa')->implode(', ') ?: '-',
-                    'diagnosa' => $item->diagnosa?->nama_diagnosa ?? '-',
-                    'pelayanan' => $item->pelayanan?->nama_pelayanan ?? '-',
-                    'dokter' => $item->dokter?->nama_dokter ?? '-',
-                    'paramedis' => $item->paramedis?->nama_paramedis ?? '-',
-                    'terapi' => $item->obats->pluck('nama_obat')->implode(', ') ?: '-',
-                    'no_karcis' => $item->no_karcis ?? '-',
-                    'retribusi' => $item->pelayanan?->tarif ?? 0,
-                ];
-            });
+    public function map($item): array
+    {
+        $tanggal = \Carbon\Carbon::parse($item->tanggal);
+        if ($tanggal->format('H:i:s') === '00:00:00' && $item->created_at) {
+            $tanggal = $tanggal->setTime($item->created_at->hour, $item->created_at->minute, $item->created_at->second);
+        }
+
+        return [
+            $tanggal->translatedFormat('d/m/Y H:i:s'),
+            $item->hewan?->pemilik?->nama_pemilik ?? '-',
+            $item->hewan?->pemilik?->alamat ?? '-',
+            $item->hewan?->nama_hewan ?? '-',
+            $item->hewan?->jenisHewan?->nama_jenis ?? '-',
+            $item->hewan?->jenis_kelamin ?? '-',
+            $item->anamnesas->pluck('nama_anamnesa')->implode(', ') ?: '-',
+            $item->diagnosa?->nama_diagnosa ?? '-',
+            $item->pelayanan?->nama_pelayanan ?? '-',
+            $item->dokter?->nama_dokter ?? '-',
+            $item->paramedis?->nama_paramedis ?? '-',
+            $item->obats->pluck('nama_obat')->implode(', ') ?: '-',
+            $item->no_karcis ?? '-',
+            $item->pelayanan?->tarif ?? 0,
+        ];
+    }
+
+    public function headings(): array
+    {
+        return [
+            'Tanggal',
+            'Nama Pemilik',
+            'Alamat',
+            'Nama Hewan',
+            'Jenis Hewan',
+            'Kelamin',
+            'Anamnesa',
+            'Diagnosa',
+            'Pelayanan',
+            'Dokter',
+            'Paramedis',
+            'Terapi',
+            'No. Karcis',
+            'Retribusi',
+        ];
     }
 
     protected function applyFilters($query, array $filters): void
