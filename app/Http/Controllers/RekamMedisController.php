@@ -25,13 +25,13 @@ class RekamMedisController extends Controller
      */
     public function index()
     {
-        $dokters = Dokter::all();
-        $paramedis = Paramedis::all();
-        $pelayanans = Pelayanan::all();
-        $jenisHewans = JenisHewan::all();
-        $anamnesas = Anamnesa::all();
-        $diagnosas = Diagnosa::all(); 
-        $obats = Obat::all();
+        $dokters = Dokter::orderBy('nama_dokter')->get();
+        $paramedis = Paramedis::orderBy('nama_paramedis')->get();
+        $pelayanans = Pelayanan::orderBy('nama_pelayanan')->get();
+        $jenisHewans = JenisHewan::orderBy('nama_jenis')->get();
+        $anamnesas = Anamnesa::orderBy('nama_anamnesa')->get();
+        $diagnosas = Diagnosa::orderBy('nama_diagnosa')->get();
+        $obats = Obat::orderBy('nama_obat')->get();
         
         return view('rekam_medis.input', compact(
             'dokters', 
@@ -115,7 +115,7 @@ class RekamMedisController extends Controller
                 ]);
             }
 
-            $umur = (int) preg_replace('/[^0-9]/', '', $request->umur_hewan ?? '0');
+            $umur = trim($request->umur_hewan ?? '0');
 
             // 2. Simpan/Update Hewan
             if ($request->id_hewan) {
@@ -125,7 +125,8 @@ class RekamMedisController extends Controller
                     'nama_hewan' => $request->nama_hewan,
                     'jenis_kelamin' => $request->jenis_kelamin,
                     'umur' => $umur,
-                    'warna' => $request->warna_hewan ?? '-'
+                    'warna' => $request->warna_hewan ?? '-',
+                    'berat_badan' => $request->berat_badan ?: null,
                 ]);
             } else {
                 $hewan = Hewan::create([
@@ -134,7 +135,8 @@ class RekamMedisController extends Controller
                     'nama_hewan' => $request->nama_hewan,
                     'jenis_kelamin' => $request->jenis_kelamin,
                     'umur' => $umur,
-                    'warna' => $request->warna_hewan ?? '-'
+                    'warna' => $request->warna_hewan ?? '-',
+                    'berat_badan' => $request->berat_badan ?: null,
                 ]);
             }
 
@@ -179,15 +181,15 @@ class RekamMedisController extends Controller
 
     public function rekapLaporan(Request $request)
     {
-        $dokters = Dokter::all();
-        $jenisHewans = JenisHewan::all();
+        $dokters = Dokter::orderBy('nama_dokter')->get();
+        $jenisHewans = JenisHewan::orderBy('nama_jenis')->get();
         $pelayanans = Pelayanan::with('jenisHewan')
             ->orderBy('nama_pelayanan')
             ->orderBy('id_jenis')
             ->orderBy('jenis_kelamin')
             ->get();
-        $diagnosas = Diagnosa::all();
-        $anamnesas = Anamnesa::all();
+        $diagnosas = Diagnosa::orderBy('nama_diagnosa')->get();
+        $anamnesas = Anamnesa::orderBy('nama_anamnesa')->get();
 
         $query = RekamMedis::with([
             'hewan.pemilik',

@@ -164,7 +164,7 @@
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-3 gap-4">
                                 <div class="space-y-1.5">
                                     <label for="umur_hewan" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Umur</label>
                                     <input type="text" id="umur_hewan" name="umur_hewan" placeholder="cth. 2 tahun"
@@ -173,6 +173,11 @@
                                 <div class="space-y-1.5">
                                     <label for="warna_hewan" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Warna</label>
                                     <input type="text" id="warna_hewan" name="warna_hewan" placeholder="cth. Oren"
+                                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label for="berat_badan" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berat Badan (kg)</label>
+                                    <input type="number" step="0.01" min="0" id="berat_badan" name="berat_badan" placeholder="cth. 3.5"
                                         class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm">
                                 </div>
                             </div>
@@ -434,7 +439,7 @@
     }
 
     const pemilikFields = ['nama_pemilik', 'no_hp_pemilik', 'alamat'];
-    const hewanFields = ['nama_hewan', 'jenis_hewan', 'jenis_kelamin', 'umur_hewan', 'warna_hewan'];
+    const hewanFields = ['nama_hewan', 'jenis_hewan', 'jenis_kelamin', 'umur_hewan', 'warna_hewan', 'berat_badan'];
 
     function selectExistingPet(id_hewan) {
         const pet = currentHewanData.find(a => String(a.id_hewan) === String(id_hewan));
@@ -452,6 +457,7 @@
         document.getElementById('jenis_kelamin').value = pet.jenis_kelamin;
         document.getElementById('umur_hewan').value = pet.umur;
         document.getElementById('warna_hewan').value = pet.warna;
+        document.getElementById('berat_badan').value = pet.berat_badan ?? '';
 
         setFieldsState([...pemilikFields, ...hewanFields], true);
         

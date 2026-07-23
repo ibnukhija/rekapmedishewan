@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\DokterController;
@@ -11,7 +12,6 @@ use App\Http\Controllers\DiagnosaController;
 use App\Http\Controllers\AnamnesaController;
 use App\Http\Controllers\SurveilansController;
 use App\Http\Controllers\ObatController;
-use App\Models\Dokter;
 
 Route::redirect('/', '/login');
 // Route untuk Halaman Auth
@@ -24,12 +24,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     
     // DIAKSES ADMIN & OPERATOR
-    Route::get('/dashboard', function () {
-        $totalDokter = Dokter::count();
-        return view('dashboard', compact('totalDokter'));
-    })->name('dashboard');
-
-    
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Modul Transaksi (Akses Operator & Admin)

@@ -201,7 +201,7 @@
                             }
                         @endphp
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                            <td class="px-5 py-3">{{ $tanggal->translatedFormat('d/m/Y H:i:s') }}</td>
+                            <td class="px-5 py-3">{{ $tanggal->translatedFormat('Y/m/d H:i:s') }}</td>
                             <td class="px-5 py-3 font-medium text-gray-900 dark:text-white">{{ $item->hewan?->pemilik?->nama_pemilik ?? '-' }}</td>
                             <td class="px-5 py-3 truncate max-w-[200px]" title="{{ $item->hewan?->pemilik?->alamat ?? '-' }}">{{ $item->hewan?->pemilik?->alamat ?? '-' }}</td>
                             <td class="px-5 py-3 font-medium text-gray-900 dark:text-white">{{ $item->hewan?->nama_hewan ?? '-' }}</td>

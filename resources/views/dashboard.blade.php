@@ -56,7 +56,7 @@
             </div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium leading-tight">Registrasi Satwa</p>
         </div>
-        <h3 class="text-2xl font-bold text-gray-900 dark:text-white pl-1">0</h3>
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-white pl-1">{{ $totalRegistrasiSatwa }}</h3>
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-center gap-3 transition-transform hover:-translate-y-1">
@@ -66,7 +66,7 @@
             </div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium leading-tight">Total Kunjungan</p>
         </div>
-        <h3 class="text-2xl font-bold text-gray-900 dark:text-white pl-1">0</h3>
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-white pl-1">{{ $totalKunjungan }}</h3>
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-center gap-3 transition-transform hover:-translate-y-1">
@@ -76,7 +76,7 @@
             </div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium leading-tight">Kunjungan Hari Ini</p>
         </div>
-        <h3 class="text-2xl font-bold text-gray-900 dark:text-white pl-1">0</h3>
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-white pl-1">{{ $kunjunganHariIni }}</h3>
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-center gap-3 transition-transform hover:-translate-y-1">
@@ -86,7 +86,7 @@
             </div>
             <p class="text-sm text-gray-500 dark:text-gray-400 font-medium leading-tight">Total Retribusi Hari Ini</p>
         </div>
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white pl-1">Rp 0</h3>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white pl-1">Rp {{ number_format($totalRetribusiHariIni, 0, ',', '.') }}</h3>
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-center gap-3 transition-transform hover:-translate-y-1">

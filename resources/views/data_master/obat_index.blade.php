@@ -111,22 +111,13 @@
             </table>
         </div>
 
-        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50/50 dark:bg-gray-800/50">
-            <span class="text-sm text-gray-500 dark:text-gray-400">
-                Menampilkan {{ $obats->firstItem() ?? 0 }} hingga {{ $obats->lastItem() ?? 0 }} dari {{ $obats->total() }} data
+        <!-- Custom Pagination -->
+        <div class="px-5 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-xs text-gray-500 dark:text-gray-400 shrink-0">
+            <span>
+                Menampilkan {{ $obats->firstItem() ?? 0 }} sampai {{ $obats->lastItem() ?? 0 }} dari {{ $obats->total() }} entri
             </span>
-            <div class="flex items-center gap-1">
-                @if ($obats->onFirstPage())
-                    <button disabled class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-400 cursor-not-allowed bg-white dark:bg-gray-800">Sebelumnya</button>
-                @else
-                    <a href="{{ $obats->previousPageUrl() }}" class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 transition-colors">Sebelumnya</a>
-                @endif
-                <button class="px-3 py-1 border border-brand-primary bg-brand-primary/10 text-brand-primary font-medium rounded-lg text-sm">{{ $obats->currentPage() }}</button>
-                @if ($obats->hasMorePages())
-                    <a href="{{ $obats->nextPageUrl() }}" class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800 transition-colors">Selanjutnya</a>
-                @else
-                    <button disabled class="px-3 py-1 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-400 cursor-not-allowed bg-white dark:bg-gray-800">Selanjutnya</button>
-                @endif
+            <div class="w-full sm:w-auto">
+                {{ $obats->links() }}
             </div>
         </div>
     </div>
