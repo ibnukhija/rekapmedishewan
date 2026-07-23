@@ -31,6 +31,12 @@
             <span class="menu-text whitespace-nowrap">Input Rekam Medis</span>
         </a>
 
+        <a href="{{ route('surveilans.index') }}"
+        class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('surveilans.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
+            <i class="fa-solid fa-shield-virus w-5 text-center flex-shrink-0 group-hover:text-brand-primary dark:group-hover:text-brand-light transition-colors"></i>
+            <span class="menu-text whitespace-nowrap">Surveilans & Vaksinasi</span>
+        </a>
+
         <!-- MENU PRIVAT: HANYA TAMPIL JIKA LOGIN SEBAGAI ADMIN -->
         @if (Auth::user()->role === 'admin')
             <p class="menu-header px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-6 whitespace-nowrap">Data Master</p>

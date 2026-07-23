@@ -9,6 +9,7 @@ use App\Http\Controllers\PelayananController;
 use App\Http\Controllers\JenisHewanController;
 use App\Http\Controllers\DiagnosaController;
 use App\Http\Controllers\AnamnesaController;
+use App\Http\Controllers\SurveilansController;
 use App\Http\Controllers\ObatController;
 use App\Models\Dokter;
 
@@ -33,7 +34,7 @@ Route::middleware('auth')->group(function () {
 
     // Modul Transaksi (Akses Operator & Admin)
     Route::get('/rekam-medis/search', [RekamMedisController::class, 'search'])->name('rekam-medis.search');
-    
+    Route::get('/surveilans', [SurveilansController::class, 'index'])->name('surveilans.index');
     // Standar resource controller
     Route::resource('rekam-medis', RekamMedisController::class);
 
