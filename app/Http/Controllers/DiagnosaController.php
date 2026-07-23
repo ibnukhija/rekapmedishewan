@@ -14,7 +14,9 @@ class DiagnosaController extends Controller
         if ($request->has('cari')) {
             $query->where('nama_diagnosa', 'like', '%' . $request->cari . '%');
         }
-        $dataDiagnosa = $query->paginate(10);
+        $dataDiagnosa = $query->orderBy('nama_diagnosa', 'asc')
+        ->paginate(10)
+        ->withQueryString();
 
         return view('data_master.diagnosa_index', compact('dataDiagnosa'));
     }
@@ -29,13 +31,13 @@ class DiagnosaController extends Controller
 
         // Pengecekan manual untuk duplikat Nama Diagnosa
         if (Diagnosa::where('nama_diagnosa', $validated['nama_diagnosa'])->exists()) {
-            return redirect()->route('diagnosa.index')
+            return redirect()->back()
                 ->with('error', 'Nama diagnosa ini sudah terdaftar di sistem.');
         }
 
         Diagnosa::create($validated);
         
-        return redirect()->route('diagnosa.index')
+        return redirect()->back()
             ->with('success', 'Data diagnosa berhasil ditambahkan!');
     }
 
@@ -51,13 +53,13 @@ class DiagnosaController extends Controller
 
         // Pengecekan manual untuk duplikat Nama Diagnosa (kecuali milik sendiri)
         if (Diagnosa::where('nama_diagnosa', $validated['nama_diagnosa'])->where('id_diagnosa', '!=', $id)->exists()) {
-            return redirect()->route('diagnosa.index')
+            return redirect()->back()
                 ->with('error', 'Nama diagnosa ini sudah terdaftar di sistem.');
         }
 
         $diagnosa->update($validated);
         
-        return redirect()->route('diagnosa.index')
+        return redirect()->back()
             ->with('success', 'Data diagnosa berhasil diperbarui!');
     }
 
@@ -66,7 +68,7 @@ class DiagnosaController extends Controller
         $diagnosa = Diagnosa::findOrFail($id);
         $diagnosa->delete();
         
-        return redirect()->route('diagnosa.index')
+        return redirect()->back()
             ->with('success', 'Data diagnosa berhasil dihapus!');
     }
 }

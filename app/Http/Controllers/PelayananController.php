@@ -53,13 +53,13 @@ class PelayananController extends Controller
             ->exists();
 
         if ($exists) {
-            return redirect()->route('pelayanan.index')
+            return redirect()->back()
                 ->with('error', 'Kombinasi pelayanan, jenis hewan, dan jenis kelamin ini sudah terdaftar.');
         }
 
         Pelayanan::create($validated);
 
-        return redirect()->route('pelayanan.index')
+        return redirect()->back()
             ->with('success', 'Data pelayanan berhasil ditambahkan.');
     }
 
@@ -89,13 +89,13 @@ class PelayananController extends Controller
             ->exists();
 
         if ($exists) {
-            return redirect()->route('pelayanan.index')
+            return redirect()->back()
                 ->with('error', 'Kombinasi pelayanan, jenis hewan, dan jenis kelamin ini sudah terdaftar.');
         }
 
         $pelayanan->update($validated);
 
-        return redirect()->route('pelayanan.index')
+        return redirect()->back()
             ->with('success', 'Data pelayanan berhasil diperbarui.');
     }
 
@@ -107,7 +107,7 @@ class PelayananController extends Controller
         $pelayanan = Pelayanan::findOrFail($id_pelayanan);
         $pelayanan->delete();
 
-        return redirect()->route('pelayanan.index')
+        return redirect()->back()
             ->with('success', 'Data pelayanan berhasil dihapus.');
     }
 }

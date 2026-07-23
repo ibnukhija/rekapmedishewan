@@ -32,13 +32,13 @@ class ObatController extends Controller
 
         // Pengecekan manual untuk duplikat Nama Obat
         if (Obat::where('nama_obat', $validated['nama_obat'])->exists()) {
-            return redirect()->route('obat.index')
+            return redirect()->back()
                 ->with('error', 'Nama obat ini sudah terdaftar di sistem.');
         }
 
         Obat::create($validated);
 
-        return redirect()->route('obat.index')
+        return redirect()->back()
             ->with('success', 'Data obat berhasil ditambahkan.');
     }
 
@@ -54,13 +54,13 @@ class ObatController extends Controller
 
         // Pengecekan manual untuk duplikat Nama Obat (kecuali milik sendiri)
         if (Obat::where('nama_obat', $validated['nama_obat'])->where('id_obat', '!=', $id_obat)->exists()) {
-            return redirect()->route('obat.index')
+            return redirect()->back()
                 ->with('error', 'Nama obat ini sudah terdaftar di sistem.');
         }
 
         $obat->update($validated);
 
-        return redirect()->route('obat.index')
+        return redirect()->back()
             ->with('success', 'Data obat berhasil diperbarui.');
     }
 
@@ -69,7 +69,7 @@ class ObatController extends Controller
         $obat = Obat::findOrFail($id_obat);
         $obat->delete();
 
-        return redirect()->route('obat.index')
+        return redirect()->back()
             ->with('success', 'Data obat berhasil dihapus.');
     }
 }

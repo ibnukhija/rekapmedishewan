@@ -37,13 +37,13 @@ class JenisHewanController extends Controller
 
         // Pengecekan manual untuk duplikat Nama Jenis Hewan
         if (JenisHewan::where('nama_jenis', $validated['nama_jenis'])->exists()) {
-            return redirect()->route('jenis_hewan.index')
+            return redirect()->back()
                 ->with('error', 'Jenis hewan ini sudah terdaftar.');
         }
 
         JenisHewan::create($validated);
 
-        return redirect()->route('jenis_hewan.index')
+        return redirect()->back()
             ->with('success', 'Data jenis hewan berhasil ditambahkan.');
     }
 
@@ -62,13 +62,13 @@ class JenisHewanController extends Controller
 
         // Pengecekan manual untuk duplikat Nama Jenis Hewan (kecuali milik sendiri)
         if (JenisHewan::where('nama_jenis', $validated['nama_jenis'])->where('id_jenis', '!=', $id_jenis)->exists()) {
-            return redirect()->route('jenis_hewan.index')
+            return redirect()->back()
                 ->with('error', 'Jenis hewan ini sudah terdaftar.');
         }
 
         $jenisHewan->update($validated);
 
-        return redirect()->route('jenis_hewan.index')
+        return redirect()->back()
             ->with('success', 'Data jenis hewan berhasil diperbarui.');
     }
 
@@ -81,13 +81,13 @@ class JenisHewanController extends Controller
 
         // Pengaman: cegah hapus jika jenis hewan masih dipakai oleh data hewan.
         if (method_exists($jenisHewan, 'hewans') && $jenisHewan->hewans()->exists()) {
-            return redirect()->route('jenis_hewan.index')
+            return redirect()->back()
                 ->with('error', 'Jenis hewan tidak bisa dihapus karena masih digunakan pada data hewan.');
         }
 
         $jenisHewan->delete();
 
-        return redirect()->route('jenis_hewan.index')
+        return redirect()->back()
             ->with('success', 'Data jenis hewan berhasil dihapus.');
     }
 }

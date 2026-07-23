@@ -12,9 +12,9 @@ class DiagnosaSeeder extends Seeder
         $diagnosas = [
             'Feline Panleukopenia (FPV)', 'Feline Calicivirus (FCV)', 
             'Feline Viral Rhinotracheitis (FVR)', 'Gastritis', 'Enteritis', 
-            'Abses', 'Trauma', 'FLUTD (Feline Lower Urinary Tract Disease)', 
-            'Infeksi Saluran Kemih (ISK)', 'Skabies', 'Dermatitis', 
-            'Endoparasitosis', 'Ektoparasitosis'
+            'Abses', 'Traumatik', 'FLUTD (Feline Lower Urinary Tract Disease)', 
+            'Infeksi Saluran Kemih (ISK)', 'Scabies', 'Dermatitis', 
+            'Endoparasitosis', 'Ektoparasitosis', 'Sehat', 'Anoreksia', 'Vomit', 'Vulnus', 'Flucat', 'Suspek', 'Dermatitis', 'Mite', 'Ring worm'
         ];
 
         foreach ($diagnosas as $diagnosa) {

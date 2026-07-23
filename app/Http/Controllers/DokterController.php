@@ -14,7 +14,9 @@ class DokterController extends Controller
         if ($request->has('cari')) {
             $query->where('nama_dokter', 'like', '%' . $request->cari . '%');
         }
-        $dokters = $query->paginate(10);
+        $dokters = $query->orderBy('nama_dokter', 'asc')
+        ->paginate(10)
+        ->withQueryString();
 
         return view('data_master.dokter_index', compact('dokters'));
     }
@@ -31,13 +33,13 @@ class DokterController extends Controller
 
         // Pengecekan manual untuk duplikat Nama Dokter
         if (Dokter::where('nama_dokter', $validated['nama_dokter'])->exists()) {
-            return redirect()->route('dokter.index')
+            return redirect()->back()
                 ->with('error', 'Nama dokter ini sudah terdaftar di sistem.');
         }
 
         // Pengecekan manual untuk duplikat No HP (jika diisi)
         if (!empty($validated['no_hp']) && Dokter::where('no_hp', $validated['no_hp'])->exists()) {
-            return redirect()->route('dokter.index')
+            return redirect()->back()
                 ->with('error', 'Nomor HP ini sudah digunakan.');
         }
 
@@ -60,19 +62,20 @@ class DokterController extends Controller
 
         // Pengecekan manual untuk duplikat Nama Dokter (kecuali milik sendiri)
         if (Dokter::where('nama_dokter', $validated['nama_dokter'])->where('id_dokter', '!=', $id)->exists()) {
-            return redirect()->route('dokter.index')
+            return redirect()->back()
                 ->with('error', 'Nama dokter ini sudah terdaftar di sistem.');
         }
 
         // Pengecekan manual untuk duplikat No HP (kecuali milik sendiri)
         if (!empty($validated['no_hp']) && Dokter::where('no_hp', $validated['no_hp'])->where('id_dokter', '!=', $id)->exists()) {
-            return redirect()->route('dokter.index')
+            return redirect()->back()
                 ->with('error', 'Nomor HP ini sudah digunakan.');
         }
         
         $dokter->update($validated);
         
-        return redirect()->route('dokter.index')->with('success', 'Data dokter berhasil diperbarui!');
+        return redirect()->back()
+            ->with('success', 'Data dokter berhasil diperbarui!');
     }
 
     public function destroy($id)
@@ -80,6 +83,7 @@ class DokterController extends Controller
         $dokter = Dokter::findOrFail($id);
         $dokter->delete();
         
-        return redirect()->route('dokter.index')->with('success', 'Data dokter berhasil dihapus!');
+        return redirect()->back()
+            ->with('success', 'Data dokter berhasil dihapus!');
     }
 }

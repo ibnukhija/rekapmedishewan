@@ -32,13 +32,13 @@ class AnamnesaController extends Controller
 
         // Pengecekan manual untuk duplikat Nama Anamnesa
         if (Anamnesa::where('nama_anamnesa', $validated['nama_anamnesa'])->exists()) {
-            return redirect()->route('anamnesa.index')
+            return redirect()->back()
                 ->with('error', 'Nama anamnesa ini sudah terdaftar di sistem.');
         }
 
         Anamnesa::create($validated);
 
-        return redirect()->route('anamnesa.index')
+        return redirect()->back()
             ->with('success', 'Data anamnesa berhasil ditambahkan.');
     }
 
@@ -54,13 +54,13 @@ class AnamnesaController extends Controller
 
         // Pengecekan manual untuk duplikat Nama Anamnesa (kecuali milik sendiri)
         if (Anamnesa::where('nama_anamnesa', $validated['nama_anamnesa'])->where('id_anamnesa', '!=', $id_anamnesa)->exists()) {
-            return redirect()->route('anamnesa.index')
+            return redirect()->back()
                 ->with('error', 'Nama anamnesa ini sudah terdaftar di sistem.');
         }
 
         $anamnesa->update($validated);
 
-        return redirect()->route('anamnesa.index')
+        return redirect()->back()
             ->with('success', 'Data anamnesa berhasil diperbarui.');
     }
 
@@ -69,7 +69,7 @@ class AnamnesaController extends Controller
         $anamnesa = Anamnesa::findOrFail($id_anamnesa);
         $anamnesa->delete();
 
-        return redirect()->route('anamnesa.index')
+        return redirect()->back()
             ->with('success', 'Data anamnesa berhasil dihapus.');
     }
 }
