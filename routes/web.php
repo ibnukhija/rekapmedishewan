@@ -55,6 +55,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/rekap-laporan', [RekamMedisController::class, 'rekapLaporan'])->name('rekap-laporan.index');
         Route::get('/rekap-laporan/export', [RekamMedisController::class, 'exportRekapLaporan'])->name('rekap-laporan.export');
+        Route::get('/rekap-laporan/pdf', [RekamMedisController::class, 'cetakRekapLaporan'])->name('rekap-laporan.pdf');
     });
 });
 
