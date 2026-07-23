@@ -269,7 +269,22 @@ class RekamMedisController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return view('data_master.rekap_laporan', compact('rekapData', 'dokters', 'jenisHewans', 'pelayanans', 'diagnosas', 'anamnesas'));
+        $minYear = RekamMedis::query()
+            ->selectRaw('MIN(YEAR(tanggal)) as year')
+            ->value('year');
+
+        $minYear = $minYear ? (int) $minYear : now()->year;
+        $years = range(now()->year, $minYear);
+
+        return view('data_master.rekap_laporan', compact(
+            'rekapData',
+            'dokters',
+            'jenisHewans',
+            'pelayanans',
+            'diagnosas',
+            'anamnesas',
+            'years'
+        ));
     }
 
     public function exportRekapLaporan(Request $request)
