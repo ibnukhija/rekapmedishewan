@@ -27,7 +27,21 @@
             <p class="text-sm font-medium">{{ session('success') }}</p>
         </div>
         <!-- Tombol Close Manual -->
-        <button onclick="closeAlert()" class="text-green-600 hover:text-green-800 focus:outline-none px-2">
+        <button onclick="closeAlert('alert-success')"
+        class="text-green-600 hover:text-green-800 focus:outline-none px-2">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    @endif
+
+    <!-- Alert Error -->
+    @if(session('error'))
+    <div id="alert-error" class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-sm mb-4 flex justify-between items-center transition-opacity duration-500">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <p class="text-sm font-medium">{{ session('error') }}</p>
+        </div>
+        <button onclick="closeAlert('alert-error')" class="text-red-600 hover:text-red-800 focus:outline-none px-2">
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>
@@ -204,6 +218,7 @@
                     class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm resize-none"></textarea>
             </div>
 
+            <!-- Footer Actions -->
             <div class="pt-4 mt-2 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
                 <button type="button" onclick="closeModal()" class="px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium">
                     Batal
@@ -221,6 +236,7 @@
 @push('scripts')
 <script>
     const alertSuccess = document.getElementById('alert-success');
+    const alertError = document.getElementById('alert-error');
     const modal = document.getElementById('doctorModal');
     const form = document.getElementById('doctorForm');
     const modalTitleText = document.getElementById('modalTitleText');
@@ -230,22 +246,28 @@
     const storeUrl = "{{ route('dokter.store') }}";
     const updateUrlBase = "{{ url('dokter') }}"; // Base URL untuk update (/dokter/{id})
 
-    // Fungsi untuk menutup alert
-    function closeAlert() {
-        if (alertSuccess) {
-            alertSuccess.style.opacity = '0';
+    // Fungsi tunggal untuk menutup alert berdasarkan ID-nya
+    function closeAlert(elementId) {
+        const alertElement = document.getElementById(elementId);
+        if (alertElement) {
+            alertElement.style.opacity = '0';
             setTimeout(() => {
-                alertSuccess.style.display = 'none';
+                alertElement.style.display = 'none';
             }, 500);
         }
     }
 
-    if (alertSuccess) {
+    if (document.getElementById('alert-success')) {
         setTimeout(() => {
-            closeAlert();
-        }, 2000);
+            closeAlert('alert-success');
+        }, 2000); 
     }
 
+    if (document.getElementById('alert-error')) {
+        setTimeout(() => {
+            closeAlert('alert-error');
+        }, 2000); 
+    }
 
     // Fungsi untuk membuka modal
     function openModal(mode, data = null) {
@@ -323,11 +345,12 @@
     });
 }
 
-// Menampilkan modal otomatis saat terjadi kesalahan validasi
-@if($errors->any())
-    document.addEventListener('DOMContentLoaded', function() {
-        modal.classList.remove('modal-hidden');
-    });
-@endif
+    // --- AUTO-OPEN MODAL ON ERROR ---
+    const adaError = {{ $errors->any() ? 'true' : 'false' }};
+    if (adaError) {
+        document.addEventListener("DOMContentLoaded", function() {
+            modal.classList.remove('modal-hidden');
+        });
+    }
 </script>
 @endpush

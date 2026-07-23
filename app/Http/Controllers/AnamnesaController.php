@@ -25,10 +25,16 @@ class AnamnesaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_anamnesa' => 'required|string|max:150|unique:anamnesa,nama_anamnesa',
+            'nama_anamnesa' => 'required|string|max:150',
         ], [
-            'nama_anamnesa.unique' => 'Nama anamnesa ini sudah terdaftar di sistem.',
+            'nama_anamnesa.required' => 'Nama anamnesa wajib diisi.',
         ]);
+
+        // Pengecekan manual untuk duplikat Nama Anamnesa
+        if (Anamnesa::where('nama_anamnesa', $validated['nama_anamnesa'])->exists()) {
+            return redirect()->route('anamnesa.index')
+                ->with('error', 'Nama anamnesa ini sudah terdaftar di sistem.');
+        }
 
         Anamnesa::create($validated);
 
@@ -41,10 +47,16 @@ class AnamnesaController extends Controller
         $anamnesa = Anamnesa::findOrFail($id_anamnesa);
 
         $validated = $request->validate([
-            'nama_anamnesa' => 'required|string|max:150|unique:anamnesa,nama_anamnesa,' . $id_anamnesa . ',id_anamnesa',
+            'nama_anamnesa' => 'required|string|max:150',
         ], [
-            'nama_anamnesa.unique' => 'Nama anamnesa ini sudah terdaftar di sistem.',
+            'nama_anamnesa.required' => 'Nama anamnesa wajib diisi.',
         ]);
+
+        // Pengecekan manual untuk duplikat Nama Anamnesa (kecuali milik sendiri)
+        if (Anamnesa::where('nama_anamnesa', $validated['nama_anamnesa'])->where('id_anamnesa', '!=', $id_anamnesa)->exists()) {
+            return redirect()->route('anamnesa.index')
+                ->with('error', 'Nama anamnesa ini sudah terdaftar di sistem.');
+        }
 
         $anamnesa->update($validated);
 

@@ -20,21 +20,29 @@
 
     <!-- Alert Success -->
     @if(session('success'))
-    <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md shadow-sm mb-4">
+    <div id="alert-success" class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md shadow-sm mb-4 flex justify-between items-center transition-opacity duration-500">
         <div class="flex items-center gap-2">
             <i class="fa-solid fa-check-circle"></i>
             <p class="text-sm font-medium">{{ session('success') }}</p>
         </div>
+        <!-- Tombol Close Manual -->
+        <button onclick="closeAlert('alert-success')"
+        class="text-green-600 hover:text-green-800 focus:outline-none px-2">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
     @endif
 
     <!-- Alert Error -->
     @if(session('error'))
-    <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-sm mb-4">
+    <div id="alert-error" class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-sm mb-4 flex justify-between items-center transition-opacity duration-500">
         <div class="flex items-center gap-2">
-            <i class="fa-solid fa-circle-exclamation"></i>
+            <i class="fa-solid fa-triangle-exclamation"></i>
             <p class="text-sm font-medium">{{ session('error') }}</p>
         </div>
+        <button onclick="closeAlert('alert-error')" class="text-red-600 hover:text-red-800 focus:outline-none px-2">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
     @endif
 
@@ -80,13 +88,15 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onclick="openModal('edit', @json($anamnesa))" class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 flex items-center justify-center transition-colors tooltip" title="Edit">
+                                <button onclick='openModal("edit", @json($anamnesa))' class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 flex items-center justify-center transition-colors tooltip" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <form action="{{ route('anamnesa.destroy', $anamnesa->id_anamnesa) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus anamnesa ini?');" class="m-0 p-0">
+
+                                <!-- Form Hapus -->
+                                <form action="{{ route('anamnesa.destroy', $anamnesa->id_anamnesa) }}" method="POST" class="m-0 p-0">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 flex items-center justify-center transition-colors tooltip" title="Hapus">
+                                    <button type="button" onclick="confirmDelete(this)" class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 flex items-center justify-center transition-colors tooltip" title="Hapus">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
@@ -169,6 +179,8 @@
 
 @push('scripts')
 <script>
+    const alertSuccess = document.getElementById('alert-success');
+    const alertError = document.getElementById('alert-error');
     const modal = document.getElementById('anamnesaModal');
     const form = document.getElementById('anamnesaForm');
     const modalTitleText = document.getElementById('modalTitleText');
@@ -176,6 +188,29 @@
 
     const storeUrl = "{{ route('anamnesa.store') }}";
     const updateUrlBase = "{{ url('anamnesa') }}";
+
+    // Fungsi tunggal untuk menutup alert berdasarkan ID-nya
+    function closeAlert(elementId) {
+        const alertElement = document.getElementById(elementId);
+        if (alertElement) {
+            alertElement.style.opacity = '0';
+            setTimeout(() => {
+                alertElement.style.display = 'none';
+            }, 500);
+        }
+    }
+
+    if (document.getElementById('alert-success')) {
+        setTimeout(() => {
+            closeAlert('alert-success');
+        }, 2000); 
+    }
+
+    if (document.getElementById('alert-error')) {
+        setTimeout(() => {
+            closeAlert('alert-error');
+        }, 2000); 
+    }
 
     function openModal(mode, data = null) {
         form.reset();
@@ -206,5 +241,40 @@
             btn.classList.add('opacity-80', 'cursor-not-allowed');
         }
     }
+
+    // Fungsi konfirmasi hapus
+    function confirmDelete(button) {
+    Swal.fire({
+        title: 'Apakah Anda Yakin?',
+        text: "Data dokter yang dihapus tidak dapat dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626', // red-600
+        cancelButtonColor: '#6b7280',  // gray-500
+        confirmButtonText: '<i class="fa-solid fa-trash mr-1"></i> Ya, Hapus!',
+        cancelButtonText: '<i class="fa-solid fa-xmark mr-1"></i> Batal',
+        background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
+        color: document.documentElement.classList.contains('dark') ? '#f3f4f6' : '#111827',
+        customClass: {
+            popup: 'rounded-2xl shadow-2xl',
+            confirmButton: 'px-5 py-2.5 rounded-xl font-medium tracking-wide',
+            cancelButton: 'px-5 py-2.5 rounded-xl font-medium tracking-wide'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Menampilkan efek loading pada SweetAlert
+            Swal.fire({
+                title: 'Menghapus...',
+                text: 'Mohon tunggu sebentar',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            button.closest('form').submit();
+        }
+    });
+}
 </script>
 @endpush

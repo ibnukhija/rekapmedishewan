@@ -60,7 +60,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                         </div>
-                        <input type="text" id="searchPasien" autocomplete="off" placeholder="Ketik minimal 2 huruf... contoh: Miko, H-000321, Andi"
+                        <input type="text" id="searchPasien" autocomplete="off" placeholder="Ketik minimal 2 huruf... contoh: Milo, 123, Andi, 08123456789"
                             class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm">
                     </div>
 

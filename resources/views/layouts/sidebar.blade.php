@@ -26,7 +26,7 @@
         </a>
 
         <a href="{{ route('rekam-medis.index') }}" 
-        class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('input_rekam_medis*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
+        class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('rekam-medis.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fa-solid fa-laptop-medical w-5 text-center flex-shrink-0 group-hover:text-brand-primary dark:group-hover:text-brand-light transition-colors"></i>
             <span class="menu-text whitespace-nowrap">Input Rekam Medis</span>
         </a>

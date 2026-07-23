@@ -30,11 +30,16 @@ class JenisHewanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_jenis' => 'required|string|max:100|unique:jenis_hewan,nama_jenis',
+            'nama_jenis' => 'required|string|max:100',
         ], [
             'nama_jenis.required' => 'Nama jenis hewan wajib diisi.',
-            'nama_jenis.unique'   => 'Jenis hewan ini sudah terdaftar.',
         ]);
+
+        // Pengecekan manual untuk duplikat Nama Jenis Hewan
+        if (JenisHewan::where('nama_jenis', $validated['nama_jenis'])->exists()) {
+            return redirect()->route('jenis_hewan.index')
+                ->with('error', 'Jenis hewan ini sudah terdaftar.');
+        }
 
         JenisHewan::create($validated);
 
@@ -50,11 +55,16 @@ class JenisHewanController extends Controller
         $jenisHewan = JenisHewan::findOrFail($id_jenis);
 
         $validated = $request->validate([
-            'nama_jenis' => 'required|string|max:100|unique:jenis_hewan,nama_jenis,' . $id_jenis . ',id_jenis',
+            'nama_jenis' => 'required|string|max:100',
         ], [
             'nama_jenis.required' => 'Nama jenis hewan wajib diisi.',
-            'nama_jenis.unique'   => 'Jenis hewan ini sudah terdaftar.',
         ]);
+
+        // Pengecekan manual untuk duplikat Nama Jenis Hewan (kecuali milik sendiri)
+        if (JenisHewan::where('nama_jenis', $validated['nama_jenis'])->where('id_jenis', '!=', $id_jenis)->exists()) {
+            return redirect()->route('jenis_hewan.index')
+                ->with('error', 'Jenis hewan ini sudah terdaftar.');
+        }
 
         $jenisHewan->update($validated);
 

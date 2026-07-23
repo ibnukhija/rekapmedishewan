@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class PemilikController
+class PemilikController extends Controller
 {
     //
 }

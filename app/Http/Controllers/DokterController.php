@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Dokter;
 use Illuminate\Http\Request;
 
-class DokterController
+class DokterController extends Controller
 {
     public function index(Request $request)
     {
@@ -14,40 +14,63 @@ class DokterController
         if ($request->has('cari')) {
             $query->where('nama_dokter', 'like', '%' . $request->cari . '%');
         }
-        $dokters = $query->paginate(5);
+        $dokters = $query->paginate(10);
 
         return view('data_master.dokter_index', compact('dokters'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nama_dokter' => 'required|string|max:100|unique:dokter,nama_dokter',
-            'no_hp'       => 'nullable|string|max:20|unique:dokter,no_hp',
+        $validated = $request->validate([
+            'nama_dokter' => 'required|string|max:100',
+            'no_hp'       => 'nullable|string|max:20',
             'alamat'      => 'nullable|string',
-        ],[
-            'nama_dokter.unique' => 'Nama dokter ini sudah terdaftar di sitem.',
-            'no_hp.unique'       => 'Nomor HP ini sudah terdaftar.',
-        ]
-        );
+        ], [
+            'nama_dokter.required' => 'Nama dokter wajib diisi.',
+        ]);
 
-        Dokter::create($request->all());
+        // Pengecekan manual untuk duplikat Nama Dokter
+        if (Dokter::where('nama_dokter', $validated['nama_dokter'])->exists()) {
+            return redirect()->route('dokter.index')
+                ->with('error', 'Nama dokter ini sudah terdaftar di sistem.');
+        }
+
+        // Pengecekan manual untuk duplikat No HP (jika diisi)
+        if (!empty($validated['no_hp']) && Dokter::where('no_hp', $validated['no_hp'])->exists()) {
+            return redirect()->route('dokter.index')
+                ->with('error', 'Nomor HP ini sudah digunakan.');
+        }
+
+        Dokter::create($validated);
+        
         return redirect()->route('dokter.index')->with('success', 'Data dokter berhasil ditambahkan!');
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'nama_dokter' => 'required|string|max:100|unique:dokter,nama_dokter,' . $id . ',id_dokter',
-            'no_hp'       => 'nullable|string|max:20|unique:dokter,no_hp,' . $id . ',id_dokter',
+        $dokter = Dokter::findOrFail($id);
+
+        $validated = $request->validate([
+            'nama_dokter' => 'required|string|max:100',
+            'no_hp'       => 'nullable|string|max:20',
             'alamat'      => 'nullable|string',
         ], [
-            'nama_dokter.unique' => 'Nama dokter ini sudah terdaftar di sitem.',
-            'no_hp.unique'       => 'Nomor HP ini sudah terdaftar.',
+            'nama_dokter.required' => 'Nama dokter wajib diisi.',
         ]);
 
-        $dokter = Dokter::findOrFail($id);
-        $dokter->update($request->all());
+        // Pengecekan manual untuk duplikat Nama Dokter (kecuali milik sendiri)
+        if (Dokter::where('nama_dokter', $validated['nama_dokter'])->where('id_dokter', '!=', $id)->exists()) {
+            return redirect()->route('dokter.index')
+                ->with('error', 'Nama dokter ini sudah terdaftar di sistem.');
+        }
+
+        // Pengecekan manual untuk duplikat No HP (kecuali milik sendiri)
+        if (!empty($validated['no_hp']) && Dokter::where('no_hp', $validated['no_hp'])->where('id_dokter', '!=', $id)->exists()) {
+            return redirect()->route('dokter.index')
+                ->with('error', 'Nomor HP ini sudah digunakan.');
+        }
+        
+        $dokter->update($validated);
         
         return redirect()->route('dokter.index')->with('success', 'Data dokter berhasil diperbarui!');
     }

@@ -45,7 +45,7 @@
         }
     </style>
 </head>
-<body class="bg-brand-bg min-h-screen flex items-center justify-center p-4 relative overflow-hidden font-sans">
+<body class="bg-brand-bg min-h-screen flex items-center justify-center p-4 relative overflow-x-hidden font-sans">
 
     <!-- Decorative background elements -->
     <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-brand-light rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>

@@ -16,14 +16,29 @@
 @section('content')
 <div class="max-w-6xl mx-auto space-y-6">
     
-    <!-- Alert Success Auto-Hide -->
+    <!-- Alert Success -->
     @if(session('success'))
     <div id="alert-success" class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md shadow-sm mb-4 flex justify-between items-center transition-opacity duration-500">
         <div class="flex items-center gap-2">
             <i class="fa-solid fa-check-circle"></i>
             <p class="text-sm font-medium">{{ session('success') }}</p>
         </div>
-        <button onclick="closeAlert()" class="text-green-600 hover:text-green-800 focus:outline-none px-2">
+        <!-- Tombol Close Manual -->
+        <button onclick="closeAlert('alert-success')"
+        class="text-green-600 hover:text-green-800 focus:outline-none px-2">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    @endif
+
+    <!-- Alert Error -->
+    @if(session('error'))
+    <div id="alert-error" class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-sm mb-4 flex justify-between items-center transition-opacity duration-500">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <p class="text-sm font-medium">{{ session('error') }}</p>
+        </div>
+        <button onclick="closeAlert('alert-error')" class="text-red-600 hover:text-red-800 focus:outline-none px-2">
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>
@@ -212,6 +227,8 @@
 @push('scripts')
 <script>
     // --- MODAL & FORM LOGIC ---
+    const alertSuccess = document.getElementById('alert-success');
+    const alertError = document.getElementById('alert-error');
     const modal = document.getElementById('paramedisModal');
     const form = document.getElementById('paramedisForm');
     const modalTitleText = document.getElementById('modalTitleText');
@@ -219,6 +236,29 @@
     
     const storeUrl = "{{ route('paramedis.store') }}";
     const updateUrlBase = "{{ url('paramedis') }}";
+
+    // Fungsi tunggal untuk menutup alert berdasarkan ID-nya
+    function closeAlert(elementId) {
+        const alertElement = document.getElementById(elementId);
+        if (alertElement) {
+            alertElement.style.opacity = '0';
+            setTimeout(() => {
+                alertElement.style.display = 'none';
+            }, 500);
+        }
+    }
+
+    if (document.getElementById('alert-success')) {
+        setTimeout(() => {
+            closeAlert('alert-success');
+        }, 2000); 
+    }
+
+    if (document.getElementById('alert-error')) {
+        setTimeout(() => {
+            closeAlert('alert-error');
+        }, 2000); 
+    }
 
     // Fungsi untuk membuka modal
     function openModal(mode, data = null) {
@@ -289,17 +329,6 @@
         });
     }
 
-    // Otomatis menutup alert
-    const alertSuccess = document.getElementById('alert-success');
-    function closeAlert() {
-        if (alertSuccess) {
-            alertSuccess.style.opacity = '0';
-            setTimeout(() => { alertSuccess.style.display = 'none'; }, 500);
-        }
-    }
-    if (alertSuccess) {
-        setTimeout(() => { closeAlert(); }, 2000); 
-    }
 
     // --- AUTO-OPEN MODAL ON ERROR ---
     const adaError = {{ $errors->any() ? 'true' : 'false' }};

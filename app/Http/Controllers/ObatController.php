@@ -25,10 +25,16 @@ class ObatController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_obat' => 'required|string|max:100|unique:obat,nama_obat',
+            'nama_obat' => 'required|string|max:100',
         ], [
-            'nama_obat.unique' => 'Nama obat ini sudah terdaftar di sistem.',
+            'nama_obat.required' => 'Nama obat wajib diisi.',
         ]);
+
+        // Pengecekan manual untuk duplikat Nama Obat
+        if (Obat::where('nama_obat', $validated['nama_obat'])->exists()) {
+            return redirect()->route('obat.index')
+                ->with('error', 'Nama obat ini sudah terdaftar di sistem.');
+        }
 
         Obat::create($validated);
 
@@ -41,10 +47,16 @@ class ObatController extends Controller
         $obat = Obat::findOrFail($id_obat);
 
         $validated = $request->validate([
-            'nama_obat' => 'required|string|max:100|unique:obat,nama_obat,' . $id_obat . ',id_obat',
+            'nama_obat' => 'required|string|max:100',
         ], [
-            'nama_obat.unique' => 'Nama obat ini sudah terdaftar di sistem.',
+            'nama_obat.required' => 'Nama obat wajib diisi.',
         ]);
+
+        // Pengecekan manual untuk duplikat Nama Obat (kecuali milik sendiri)
+        if (Obat::where('nama_obat', $validated['nama_obat'])->where('id_obat', '!=', $id_obat)->exists()) {
+            return redirect()->route('obat.index')
+                ->with('error', 'Nama obat ini sudah terdaftar di sistem.');
+        }
 
         $obat->update($validated);
 
