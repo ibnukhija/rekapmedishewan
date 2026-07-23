@@ -51,6 +51,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('diagnosa', DiagnosaController::class);
         Route::resource('anamnesa', AnamnesaController::class);
         Route::resource('obat', ObatController::class);
+
+        Route::get('/rekap-laporan', [RekamMedisController::class, 'rekapLaporan'])->name('rekap-laporan.index');
+        Route::get('/rekap-laporan/export', [RekamMedisController::class, 'exportRekapLaporan'])->name('rekap-laporan.export');
     });
 });
 

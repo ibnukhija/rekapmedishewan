@@ -11,6 +11,8 @@ use App\Models\Dokter;
 use App\Models\Paramedis;
 use App\Models\Pelayanan;
 use App\Models\JenisHewan;
+use App\Exports\RekapLaporanExport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Diagnosa;
 use App\Models\Anamnesa;
 use App\Models\Obat;
@@ -135,10 +137,14 @@ class RekamMedisController extends Controller
                 ]);
             }
 
-            // 3. Ambil Diagnosa Pertama yang dipilih
+            // 3. Ambil Diagnosa yang dipilih
             $id_diagnosa = null;
-            if ($request->has('diagnosa') && is_array($request->diagnosa) && count($request->diagnosa) > 0) {
-                $id_diagnosa = $request->diagnosa[0]; 
+            if ($request->filled('diagnosa')) {
+                if (is_array($request->diagnosa) && count($request->diagnosa) > 0) {
+                    $id_diagnosa = $request->diagnosa[0];
+                } else {
+                    $id_diagnosa = $request->diagnosa;
+                }
             }
 
             // 4. Simpan ke Rekam Medis
@@ -168,5 +174,106 @@ class RekamMedisController extends Controller
             DB::rollBack();
             return response()->json(['success' => false, 'message' => 'Gagal menyimpan: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function rekapLaporan(Request $request)
+    {
+        $dokters = Dokter::all();
+        $jenisHewans = JenisHewan::all();
+        $pelayanans = Pelayanan::with('jenisHewan')
+            ->orderBy('nama_pelayanan')
+            ->orderBy('id_jenis')
+            ->orderBy('jenis_kelamin')
+            ->get();
+        $diagnosas = Diagnosa::all();
+        $anamnesas = Anamnesa::all();
+
+        $query = RekamMedis::with([
+            'hewan.pemilik',
+            'hewan.jenisHewan',
+            'dokter',
+            'paramedis',
+            'pelayanan',
+            'diagnosa',
+            'anamnesas',
+            'obats',
+        ]);
+
+        if ($request->filled('q')) {
+            $search = $request->q;
+            $query->where(function ($q) use ($search) {
+                $q->where('no_karcis', 'like', "%{$search}%")
+                    ->orWhereHas('hewan', function ($sub) use ($search) {
+                        $sub->where('nama_hewan', 'like', "%{$search}%")
+                            ->orWhere('jenis_kelamin', 'like', "%{$search}%")
+                            ->orWhereHas('pemilik', function ($sub2) use ($search) {
+                                $sub2->where('nama_pemilik', 'like', "%{$search}%")
+                                     ->orWhere('alamat', 'like', "%{$search}%");
+                            });
+                    })
+                    ->orWhereHas('diagnosa', function ($sub) use ($search) {
+                        $sub->where('nama_diagnosa', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('pelayanan', function ($sub) use ($search) {
+                        $sub->where('nama_pelayanan', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('dokter', function ($sub) use ($search) {
+                        $sub->where('nama_dokter', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        if ($request->filled('dokter')) {
+            $query->where('id_dokter', $request->dokter);
+        }
+
+        if ($request->filled('jenis_hewan')) {
+            $query->whereHas('hewan', function ($sub) use ($request) {
+                $sub->where('id_jenis', $request->jenis_hewan);
+            });
+        }
+
+        if ($request->filled('pelayanan')) {
+            $query->where('id_pelayanan', $request->pelayanan);
+        }
+
+        if ($request->filled('diagnosa')) {
+            $query->where('id_diagnosa', $request->diagnosa);
+        }
+
+        if ($request->filled('anamnesa')) {
+            $query->whereHas('anamnesas', function ($sub) use ($request) {
+                $sub->where('anamnesa.id_anamnesa', $request->anamnesa);
+            });
+        }
+
+        if ($request->filled('jenis_kelamin')) {
+            $query->whereHas('hewan', function ($sub) use ($request) {
+                $sub->where('jenis_kelamin', $request->jenis_kelamin);
+            });
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('tanggal', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('tanggal', '<=', $request->end_date);
+        }
+
+        if ($request->filled('year')) {
+            $query->whereYear('tanggal', $request->year);
+        }
+
+        $rekapData = $query->orderBy('tanggal', 'desc')
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('data_master.rekap_laporan', compact('rekapData', 'dokters', 'jenisHewans', 'pelayanans', 'diagnosas', 'anamnesas'));
+    }
+
+    public function exportRekapLaporan(Request $request)
+    {
+        return Excel::download(new RekapLaporanExport($request->all()), 'rekap-laporan-' . now()->format('Ymd_His') . '.xlsx');
     }
 }
