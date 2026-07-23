@@ -187,11 +187,11 @@
         </div>
 
         <!-- Section 3: Pemeriksaan Medis -->
-        <div id="lockWrapMedis" class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div id="lockOverlayMedis" class="absolute inset-0 z-10 bg-white/70 dark:bg-gray-800/70 backdrop-blur-[1px] flex items-center justify-center">
+        <div id="lockWrapMedis" class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <div id="lockOverlayMedis" class="absolute inset-0 z-10 bg-white/70 dark:bg-gray-800/70 backdrop-blur-[1px] flex items-center justify-center rounded-2xl">
                 <p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2"><i class="fa-solid fa-lock"></i>Pilih atau daftarkan pasien terlebih dahulu</p>
             </div>
-            <div class="bg-brand-primary/5 dark:bg-gray-700/30 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3">
+            <div class="bg-brand-primary/5 dark:bg-gray-700/30 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3 rounded-t-2xl">
                 <i class="fa-solid fa-stethoscope text-brand-primary dark:text-brand-light"></i>
                 <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Pemeriksaan Medis</h2>
             </div>
@@ -578,13 +578,16 @@
         const idJenisHewan = jenisHewanSelect.value;
         const kelaminHewan = jenisKelaminSelect.value;
 
+        // Normalisasi supaya beda kapitalisasi/spasi (mis. "jantan" vs "Jantan") tetap cocok
+        const norm = (v) => (v || '').toString().trim().toLowerCase();
+
         pelayananOptions.forEach(opt => {
             const optJenis = opt.getAttribute('data-jenis') || '';
             const optKelamin = opt.getAttribute('data-kelamin') || '';
             // Cocok kalau pelayanan berlaku "semua jenis" (kosong) ATAU jenisnya sama persis
-            const jenisCocok = !optJenis || optJenis === idJenisHewan;
+            const jenisCocok = !optJenis || norm(optJenis) === norm(idJenisHewan);
             // Cocok kalau pelayanan berlaku "semua kelamin" (kosong) ATAU kelaminnya sama persis
-            const kelaminCocok = !optKelamin || optKelamin === kelaminHewan;
+            const kelaminCocok = !optKelamin || norm(optKelamin) === norm(kelaminHewan);
             opt.hidden = !(jenisCocok && kelaminCocok);
         });
 

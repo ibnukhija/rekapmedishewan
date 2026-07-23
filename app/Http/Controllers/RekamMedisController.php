@@ -208,7 +208,7 @@ class RekamMedisController extends Controller
                             ->orWhere('jenis_kelamin', 'like', "%{$search}%")
                             ->orWhereHas('pemilik', function ($sub2) use ($search) {
                                 $sub2->where('nama_pemilik', 'like', "%{$search}%")
-                                     ->orWhere('alamat', 'like', "%{$search}%");
+                                    ->orWhere('alamat', 'like', "%{$search}%");
                             });
                     })
                     ->orWhereHas('diagnosa', function ($sub) use ($search) {
