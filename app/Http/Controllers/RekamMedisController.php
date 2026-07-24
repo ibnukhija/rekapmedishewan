@@ -268,6 +268,8 @@ class RekamMedisController extends Controller
             $query->whereYear('tanggal', $request->year);
         }
 
+        $summaryData = $query->clone()->orderBy('tanggal', 'desc')->get();
+
         $rekapData = $query->orderBy('tanggal', 'desc')
             ->paginate(15)
             ->withQueryString();
@@ -279,6 +281,11 @@ class RekamMedisController extends Controller
         $minYear = $minYear ? (int) $minYear : now()->year;
         $years = range(now()->year, $minYear);
 
+        $totalEntrySummary = $summaryData->count();
+        $totalRetribusiSummary = $summaryData->sum(fn ($item) => $item->pelayanan?->tarif ?? 0);
+        $totalHewanUnikSummary = $summaryData->pluck('id_hewan')->filter()->unique()->count();
+        $dokterAktifSummary = $summaryData->pluck('id_dokter')->filter()->unique()->count();
+
         return view('data_master.rekap_laporan', compact(
             'rekapData',
             'dokters',
@@ -286,7 +293,11 @@ class RekamMedisController extends Controller
             'pelayanans',
             'diagnosas',
             'anamnesas',
-            'years'
+            'years',
+            'totalEntrySummary',
+            'totalRetribusiSummary',
+            'totalHewanUnikSummary',
+            'dokterAktifSummary'
         ));
     }
 

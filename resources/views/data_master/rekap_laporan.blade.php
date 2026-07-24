@@ -225,6 +225,27 @@
             </table>
         </div>
 
+        <div class="px-5 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+                <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3">
+                    <div class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Total Entri</div>
+                    <div class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ $totalEntrySummary }}</div>
+                </div>
+                <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3">
+                    <div class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Total Retribusi</div>
+                    <div class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">Rp {{ number_format($totalRetribusiSummary, 0, ',', '.') }}</div>
+                </div>
+                <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3">
+                    <div class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Total Hewan (Unik)</div>
+                    <div class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ $totalHewanUnikSummary }}</div>
+                </div>
+                <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3">
+                    <div class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Dokter Aktif</div>
+                    <div class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ $dokterAktifSummary }}</div>
+                </div>
+            </div>
+        </div>
+
         <div class="px-5 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-xs text-gray-500 dark:text-gray-400 shrink-0">
             <span>
                 Menampilkan {{ $rekapData->firstItem() ?? 0 }} sampai {{ $rekapData->lastItem() ?? 0 }} dari {{ $rekapData->total() }} entri
