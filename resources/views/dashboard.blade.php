@@ -41,7 +41,7 @@
             </div>
             <div class="flex items-center gap-3">
                 <i class="fa-solid fa-paw text-brand-primary text-xl"></i>
-                <span class="text-sm">Melayani Berbagai Jenis Hewan</span>
+                <span class="text-sm">Melayani Berbagai Jenis Hewan Peliharaan</span>
             </div>
         </div>
     </div>

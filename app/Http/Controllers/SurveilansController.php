@@ -22,6 +22,7 @@ class SurveilansController extends Controller
             ->join('pemilik as p', 'h.id_pemilik', '=', 'p.id_pemilik')
             ->join('diagnosa as d', 'rm.id_diagnosa', '=', 'd.id_diagnosa')
             ->whereNotNull('rm.id_diagnosa')
+            ->where('d.nama_diagnosa', '!=', 'Sehat') // Kecualikan diagnosa "Sehat" dari data surveilans
             ->where('rm.tanggal', '>=', $mulai);
 
         if ($daerah !== 'semua') {
@@ -54,17 +55,6 @@ class SurveilansController extends Controller
             ->map->count()
             ->sortKeys();
 
-        // Rekomendasi vaksinasi, diurutkan dari yang paling banyak kasusnya
-        $rekomendasi = $rows->where('perlu_vaksin', 1)
-            ->groupBy('diagnosa')
-            ->map(fn ($g) => [
-                'diagnosa' => $g->first()->diagnosa,
-                'jenis'    => $g->pluck('jenis')->unique()->implode(', '),
-                'count'    => $g->count(),
-            ])
-            ->sortByDesc('count')
-            ->values();
-
         $ringkasan = [
             'total'            => $rows->count(),
             'perlu_vaksin'     => $rows->where('perlu_vaksin', 1)->count(),
@@ -78,7 +68,7 @@ class SurveilansController extends Controller
         $daftarJenis  = DB::table('jenis_hewan')->orderBy('nama_jenis')->pluck('nama_jenis');
 
         return view('surveilans.index', compact(
-            'matrix', 'trend', 'rekomendasi', 'ringkasan', 'rekamTerbaru',
+            'matrix', 'trend', 'ringkasan', 'rekamTerbaru',
             'daftarDaerah', 'daftarJenis', 'daerah', 'jenis', 'periode'
         ));
     }

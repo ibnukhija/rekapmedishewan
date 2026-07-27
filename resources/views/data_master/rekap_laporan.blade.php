@@ -42,8 +42,7 @@
                 </div>
             </div>
 
-                <div class="flex flex-wrap items-center justify-end gap-3">
-
+                <div class="flex flex-wrap items-center justify-end gap-3 mt-2">
                     <button type="button"
                         id="btnFilterMore"
                         class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-medium py-2 px-3 text-sm rounded-xl shadow-sm hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200 flex items-center gap-2">
@@ -69,11 +68,10 @@
                     </a>
 
                     <a href="{{ route('rekap-laporan.pdf', request()->query()) }}"
-                        class="bg-red-600 hover:bg-red-700 text-white rounded-lg px-4 py-2 flex items-center gap-2">
+                        class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 text-sm rounded-xl shadow-lg shadow-green-600/20 transition-all duration-200 flex items-center gap-2">
                         <i class="fa-solid fa-file-pdf"></i>
                         PDF
                     </a>
-
                 </div>
 
             <div id="filter-more-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-4 py-6">
@@ -228,7 +226,7 @@
         <div class="px-5 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
                 <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3">
-                    <div class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Total Entri</div>
+                    <div class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Total Kunjungan</div>
                     <div class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ $totalEntrySummary }}</div>
                 </div>
                 <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3">

@@ -70,7 +70,7 @@
                     <div class="flex items-center justify-between mt-3">
                         <p class="text-xs text-gray-400 dark:text-gray-500">Data pasien akan otomatis muncul jika sudah pernah berobat.</p>
                         <button type="button" onclick="selectNewRegistration()" class="text-sm font-medium text-brand-primary dark:text-brand-light hover:underline whitespace-nowrap ml-4">
-                            + Pasien Benar-benar Baru
+                            + Tambah Data Pasien Baru
                         </button>
                     </div>
                 </div>
@@ -116,10 +116,85 @@
                                 </div>
                             </div>
 
+                            <!-- ALAMAT: Kota Kediri (dropdown kelurahan) atau Luar Kota Kediri (manual) -->
                             <div class="space-y-1.5">
-                                <label for="alamat" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Alamat Lengkap</label>
-                                <textarea id="alamat" name="alamat" rows="3" placeholder="Masukkan alamat lengkap pemilik"
-                                    class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm resize-none"></textarea>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Alamat</label>
+
+                                <div class="flex items-center gap-5 mb-1">
+                                    <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+                                        <input type="radio" id="lokasi_dalam_kota" name="lokasi_alamat" value="dalam" checked onchange="toggleAlamatMode()">
+                                        Kota Kediri
+                                    </label>
+                                    <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+                                        <input type="radio" id="lokasi_luar_kota" name="lokasi_alamat" value="luar" onchange="toggleAlamatMode()">
+                                        Luar Kota Kediri
+                                    </label>
+                                </div>
+
+                                <div id="alamatDalamKotaWrap">
+                                    <select id="alamat_kelurahan" name="alamat"
+                                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm appearance-none cursor-pointer">
+                                        <option value="" disabled selected>Pilih Kelurahan...</option>
+                                        <optgroup label="Kecamatan Kota">
+                                            <option value="Kelurahan Semampir, Kec. Kota, Kota Kediri">Semampir</option>
+                                            <option value="Kelurahan Dandangan, Kec. Kota, Kota Kediri">Dandangan</option>
+                                            <option value="Kelurahan Ngadirejo, Kec. Kota, Kota Kediri">Ngadirejo</option>
+                                            <option value="Kelurahan Pakelan, Kec. Kota, Kota Kediri">Pakelan</option>
+                                            <option value="Kelurahan Pocanan, Kec. Kota, Kota Kediri">Pocanan</option>
+                                            <option value="Kelurahan Banjaran, Kec. Kota, Kota Kediri">Banjaran</option>
+                                            <option value="Kelurahan Jagalan, Kec. Kota, Kota Kediri">Jagalan</option>
+                                            <option value="Kelurahan Kemasan, Kec. Kota, Kota Kediri">Kemasan</option>
+                                            <option value="Kelurahan Kaliombo, Kec. Kota, Kota Kediri">Kaliombo</option>
+                                            <option value="Kelurahan Kampung Dalem, Kec. Kota, Kota Kediri">Kampung Dalem</option>
+                                            <option value="Kelurahan Ngronggo, Kec. Kota, Kota Kediri">Ngronggo</option>
+                                            <option value="Kelurahan Manisrenggo, Kec. Kota, Kota Kediri">Manisrenggo</option>
+                                            <option value="Kelurahan Balowerti, Kec. Kota, Kota Kediri">Balowerti</option>
+                                            <option value="Kelurahan Rejomulyo, Kec. Kota, Kota Kediri">Rejomulyo</option>
+                                            <option value="Kelurahan Ringin Anom, Kec. Kota, Kota Kediri">Ringin Anom</option>
+                                            <option value="Kelurahan Setono Gedong, Kec. Kota, Kota Kediri">Setono Gedong</option>
+                                            <option value="Kelurahan Setono Pande, Kec. Kota, Kota Kediri">Setono Pande</option>
+                                        </optgroup>
+                                        <optgroup label="Kecamatan Mojoroto">
+                                            <option value="Kelurahan Lirboyo, Kec. Mojoroto, Kota Kediri">Lirboyo</option>
+                                            <option value="Kelurahan Campurejo, Kec. Mojoroto, Kota Kediri">Campurejo</option>
+                                            <option value="Kelurahan Bandar Lor, Kec. Mojoroto, Kota Kediri">Bandar Lor</option>
+                                            <option value="Kelurahan Dermo, Kec. Mojoroto, Kota Kediri">Dermo</option>
+                                            <option value="Kelurahan Mrican, Kec. Mojoroto, Kota Kediri">Mrican</option>
+                                            <option value="Kelurahan Mojoroto, Kec. Mojoroto, Kota Kediri">Mojoroto</option>
+                                            <option value="Kelurahan Ngampel, Kec. Mojoroto, Kota Kediri">Ngampel</option>
+                                            <option value="Kelurahan Gayam, Kec. Mojoroto, Kota Kediri">Gayam</option>
+                                            <option value="Kelurahan Sukorame, Kec. Mojoroto, Kota Kediri">Sukorame</option>
+                                            <option value="Kelurahan Pojok, Kec. Mojoroto, Kota Kediri">Pojok</option>
+                                            <option value="Kelurahan Tamanan, Kec. Mojoroto, Kota Kediri">Tamanan</option>
+                                            <option value="Kelurahan Bandar Kidul, Kec. Mojoroto, Kota Kediri">Bandar Kidul</option>
+                                            <option value="Kelurahan Banjarmelati, Kec. Mojoroto, Kota Kediri">Banjarmelati</option>
+                                            <option value="Kelurahan Bujel, Kec. Mojoroto, Kota Kediri">Bujel</option>
+                                        </optgroup>
+                                        <optgroup label="Kecamatan Pesantren">
+                                            <option value="Kelurahan Jamsaren, Kec. Pesantren, Kota Kediri">Jamsaren</option>
+                                            <option value="Kelurahan Bangsal, Kec. Pesantren, Kota Kediri">Bangsal</option>
+                                            <option value="Kelurahan Burengan, Kec. Pesantren, Kota Kediri">Burengan</option>
+                                            <option value="Kelurahan Pesantren, Kec. Pesantren, Kota Kediri">Pesantren</option>
+                                            <option value="Kelurahan Pakunden, Kec. Pesantren, Kota Kediri">Pakunden</option>
+                                            <option value="Kelurahan Singonegaran, Kec. Pesantren, Kota Kediri">Singonegaran</option>
+                                            <option value="Kelurahan Tinalan, Kec. Pesantren, Kota Kediri">Tinalan</option>
+                                            <option value="Kelurahan Banaran, Kec. Pesantren, Kota Kediri">Banaran</option>
+                                            <option value="Kelurahan Tosaren, Kec. Pesantren, Kota Kediri">Tosaren</option>
+                                            <option value="Kelurahan Betet, Kec. Pesantren, Kota Kediri">Betet</option>
+                                            <option value="Kelurahan Blabak, Kec. Pesantren, Kota Kediri">Blabak</option>
+                                            <option value="Kelurahan Bawang, Kec. Pesantren, Kota Kediri">Bawang</option>
+                                            <option value="Kelurahan Ngletih, Kec. Pesantren, Kota Kediri">Ngletih</option>
+                                            <option value="Kelurahan Tempurejo, Kec. Pesantren, Kota Kediri">Tempurejo</option>
+                                            <option value="Kelurahan Ketami, Kec. Pesantren, Kota Kediri">Ketami</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+
+                                <div id="alamatLuarKotaWrap" class="hidden">
+                                    <input type="text" id="alamat_manual" name="alamat" disabled placeholder="cth. Kandat, Kabupaten Kediri / Kota Blitar"
+                                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm">
+                                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Cukup isi desa/kecamatan, dan nama kota/kabupaten saja.</p>
+                                </div>
                             </div>
                         </div>
 
@@ -165,10 +240,18 @@
                             </div>
 
                             <div class="grid grid-cols-3 gap-4">
+                                <!-- UMUR: Tahun & Bulan terpisah, digabung ke hidden umur_hewan sebelum submit -->
                                 <div class="space-y-1.5">
-                                    <label for="umur_hewan" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Umur</label>
-                                    <input type="text" id="umur_hewan" name="umur_hewan" placeholder="cth. 2 tahun"
-                                        class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Umur</label>
+                                    <div class="flex items-center gap-1">
+                                        <input type="number" min="0" id="umur_tahun" placeholder="0"
+                                            class="w-full px-2 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm text-center">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">Thn</span>
+                                        <input type="number" min="0" max="11" id="umur_bulan" placeholder="0"
+                                            class="w-full px-2 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm text-center">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">Bln</span>
+                                    </div>
+                                    <input type="hidden" id="umur_hewan" name="umur_hewan" value="">
                                 </div>
                                 <div class="space-y-1.5">
                                     <label for="warna_hewan" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Warna</label>
@@ -354,6 +437,7 @@
 <script>
     document.getElementById('tanggal').valueAsDate = new Date();
     lockSections();
+    toggleAlamatMode();
 
     const searchInput = document.getElementById('searchPasien');
     const searchResults = document.getElementById('searchResults');
@@ -438,8 +522,70 @@
         searchResults.innerHTML = html;
     }
 
-    const pemilikFields = ['nama_pemilik', 'no_hp_pemilik', 'alamat'];
-    const hewanFields = ['nama_hewan', 'jenis_hewan', 'jenis_kelamin', 'umur_hewan', 'warna_hewan', 'berat_badan'];
+    const pemilikFields = ['nama_pemilik', 'no_hp_pemilik', 'lokasi_dalam_kota', 'lokasi_luar_kota', 'alamat_kelurahan', 'alamat_manual'];
+    const hewanFields = ['nama_hewan', 'jenis_hewan', 'jenis_kelamin', 'umur_tahun', 'umur_bulan', 'warna_hewan', 'berat_badan'];
+
+    // ===== ALAMAT: toggle antara dropdown kelurahan (Kota Kediri) & textarea manual (Luar Kota Kediri) =====
+    function toggleAlamatMode() {
+        const dalam = document.getElementById('lokasi_dalam_kota').checked;
+        document.getElementById('alamatDalamKotaWrap').classList.toggle('hidden', !dalam);
+        document.getElementById('alamatLuarKotaWrap').classList.toggle('hidden', dalam);
+
+        // Hanya field yang aktif/terlihat yang boleh ikut ter-submit sebagai "alamat"
+        document.getElementById('alamat_kelurahan').disabled = !dalam;
+        document.getElementById('alamat_manual').disabled = dalam;
+    }
+
+    // Isi ulang alamat dari data lama: cocokkan ke opsi kelurahan, kalau tidak cocok anggap luar kota
+    function loadAlamat(alamatValue) {
+        const selectKelurahan = document.getElementById('alamat_kelurahan');
+        const textareaManual = document.getElementById('alamat_manual');
+        const radioDalam = document.getElementById('lokasi_dalam_kota');
+        const radioLuar = document.getElementById('lokasi_luar_kota');
+
+        const matchOption = Array.from(selectKelurahan.options).find(o => o.value === alamatValue);
+
+        if (matchOption) {
+            radioDalam.checked = true;
+            selectKelurahan.value = alamatValue;
+            textareaManual.value = '';
+        } else {
+            radioLuar.checked = true;
+            selectKelurahan.selectedIndex = 0;
+            textareaManual.value = (alamatValue && alamatValue !== '-') ? alamatValue : '';
+        }
+        toggleAlamatMode();
+    }
+
+    // ===== UMUR: gabungkan tahun & bulan ke hidden field umur_hewan =====
+    function updateUmurHidden() {
+        const tahun = parseInt(document.getElementById('umur_tahun').value) || 0;
+        const bulan = parseInt(document.getElementById('umur_bulan').value) || 0;
+        const parts = [];
+        if (tahun > 0) parts.push(tahun + ' Tahun');
+        if (bulan > 0) parts.push(bulan + ' Bulan');
+        document.getElementById('umur_hewan').value = parts.length ? parts.join(' ') : '-';
+    }
+
+    // Pecah data umur lama (mis. "2 Tahun 3 Bulan", atau angka lama "12") ke input tahun & bulan
+    function loadUmur(umurValue) {
+        const str = (umurValue ?? '').toString().trim();
+        const tahunMatch = str.match(/(\d+)\s*Tahun/i);
+        const bulanMatch = str.match(/(\d+)\s*Bulan/i);
+
+        if (tahunMatch || bulanMatch) {
+            document.getElementById('umur_tahun').value = tahunMatch ? tahunMatch[1] : '';
+            document.getElementById('umur_bulan').value = bulanMatch ? bulanMatch[1] : '';
+        } else if (/^\d+$/.test(str)) {
+            // Fallback data lama yang cuma angka polos, dianggap tahun
+            document.getElementById('umur_tahun').value = str;
+            document.getElementById('umur_bulan').value = '';
+        } else {
+            document.getElementById('umur_tahun').value = '';
+            document.getElementById('umur_bulan').value = '';
+        }
+        document.getElementById('umur_hewan').value = str;
+    }
 
     function selectExistingPet(id_hewan) {
         const pet = currentHewanData.find(a => String(a.id_hewan) === String(id_hewan));
@@ -450,16 +596,17 @@
 
         document.getElementById('nama_pemilik').value = owner.nama_pemilik;
         document.getElementById('no_hp_pemilik').value = owner.no_hp;
-        document.getElementById('alamat').value = owner.alamat;
+        loadAlamat(owner.alamat);
 
         document.getElementById('nama_hewan').value = pet.nama_hewan;
         document.getElementById('jenis_hewan').value = pet.id_jenis;
         document.getElementById('jenis_kelamin').value = pet.jenis_kelamin;
-        document.getElementById('umur_hewan').value = pet.umur;
+        loadUmur(pet.umur);
         document.getElementById('warna_hewan').value = pet.warna;
         document.getElementById('berat_badan').value = pet.berat_badan ?? '';
 
         setFieldsState([...pemilikFields, ...hewanFields], true);
+        toggleAlamatMode();
         
         patientCardStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Pasien Lama — Data Ditemukan';
         showPatientCard();
@@ -474,15 +621,16 @@
 
         document.getElementById('nama_pemilik').value = owner.nama_pemilik;
         document.getElementById('no_hp_pemilik').value = owner.no_hp;
-        document.getElementById('alamat').value = owner.alamat;
+        loadAlamat(owner.alamat);
 
         clearFields(hewanFields);
-        setFieldsState(pemilikFields, true);
+        setFieldsState(['nama_pemilik', 'no_hp_pemilik', 'lokasi_dalam_kota', 'lokasi_luar_kota', 'alamat_kelurahan', 'alamat_manual'], true);
         setFieldsState(hewanFields, false);
 
         patientCardStatus.innerHTML = '<i class="fa-solid fa-plus"></i> Pemilik Lama — Hewan Baru';
         showPatientCard();
         resetFilterPelayanan();
+        toggleAlamatMode();
         document.getElementById('nama_hewan').focus();
     }
 
@@ -497,6 +645,7 @@
         patientCardStatus.innerHTML = '<i class="fa-solid fa-user-plus"></i> Pendaftaran Baru';
         showPatientCard();
         resetFilterPelayanan();
+        toggleAlamatMode();
         document.getElementById('nama_pemilik').focus();
     }
 
@@ -505,9 +654,11 @@
         const btn = group === 'pemilik' ? document.getElementById('btnEditPemilik') : document.getElementById('btnEditHewan');
         const isCurrentlyEditable = ids.some(id => {
             const el = document.getElementById(id);
-            return el.tagName === 'SELECT' ? !el.disabled : !el.readOnly;
+            if (!el) return false;
+            return (el.tagName === 'SELECT' || el.type === 'radio') ? !el.disabled : !el.readOnly;
         });
         setFieldsState(ids, isCurrentlyEditable);
+        if (group === 'pemilik') { toggleAlamatMode(); }
         btn.innerHTML = isCurrentlyEditable
             ? '<i class="fa-solid fa-pen mr-1"></i>Edit'
             : '<i class="fa-solid fa-check mr-1"></i>Selesai';
@@ -516,7 +667,12 @@
     function clearFields(ids) { 
         ids.forEach(id => { 
             const el = document.getElementById(id); 
-            if(el) { el.value = ''; }
+            if (!el) return;
+            if (el.type === 'radio') {
+                el.checked = (id === 'lokasi_dalam_kota');
+            } else {
+                el.value = '';
+            }
         }); 
     }
     
@@ -524,7 +680,11 @@
         ids.forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
-            if (el.tagName === 'SELECT') { el.disabled = readonly; } else { el.readOnly = readonly; }
+            if (el.tagName === 'SELECT' || el.type === 'radio' || el.type === 'checkbox') {
+                el.disabled = readonly;
+            } else {
+                el.readOnly = readonly;
+            }
             el.classList.toggle('bg-gray-100', readonly);
             el.classList.toggle('dark:bg-gray-800', readonly);
             el.classList.toggle('cursor-not-allowed', readonly);
@@ -720,6 +880,8 @@
         e.preventDefault();
         
         setFieldsState([...pemilikFields, ...hewanFields], false);
+        toggleAlamatMode();
+        updateUmurHidden();
 
         const form = e.target;
         const btn = document.getElementById('btnSubmit');
@@ -760,7 +922,9 @@
                     
                     document.getElementById('tanggal').valueAsDate = new Date();
                     document.getElementById('retribusi').value = '0';
+                    document.getElementById('umur_hewan').value = '';
                     resetSearch();
+                    toggleAlamatMode();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }, 2000);
             } else {

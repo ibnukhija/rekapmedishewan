@@ -20,9 +20,21 @@ use App\Models\Obat;
 
 class RekamMedisController extends Controller
 {
-    /**
-     * Tampilkan halaman Form Input Rekam Medis
-     */
+    
+    // Rapikan alamat sebelum disimpan supaya grouping di modul Surveilans konsisten.
+    private function normalizeAlamat(?string $alamat): string
+    {
+        $alamat = trim($alamat ?? '');
+        if ($alamat === '') {
+            return '-';
+        }
+        if (str_contains($alamat, 'Kota Kediri')) {
+            return $alamat;
+        }
+        return mb_convert_case($alamat, MB_CASE_TITLE, 'UTF-8');
+    }
+
+    // Tampilkan halaman Form Input Rekam Medis
     public function index()
     {
         $dokters = Dokter::orderBy('nama_dokter')->get();
@@ -44,9 +56,7 @@ class RekamMedisController extends Controller
         ));
     }
 
-    /**
-     * Endpoint API AJAX untuk Live Search Pasien & Pemilik
-     */
+    // Endpoint API AJAX untuk Live Search Pasien & Pemilik
     public function search(Request $request)
     {
         $q = $request->q;
@@ -81,9 +91,7 @@ class RekamMedisController extends Controller
         ]);
     }
 
-    /**
-     * Proses Simpan Data Transaksi (Create/Update berjenjang)
-     */
+    // Proses Simpan Data Transaksi (Create/Update berjenjang)
     public function store(Request $request)
     {
         $request->validate([
@@ -105,13 +113,13 @@ class RekamMedisController extends Controller
                 $pemilik->update([
                     'nama_pemilik' => $request->nama_pemilik,
                     'no_hp' => $request->no_hp_pemilik ?? '-',
-                    'alamat' => $request->alamat ?? '-'
+                    'alamat' => $this->normalizeAlamat($request->alamat)
                 ]);
             } else {
                 $pemilik = Pemilik::create([
                     'nama_pemilik' => $request->nama_pemilik,
                     'no_hp' => $request->no_hp_pemilik ?? '-',
-                    'alamat' => $request->alamat ?? '-'
+                    'alamat' => $this->normalizeAlamat($request->alamat)
                 ]);
             }
 

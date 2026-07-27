@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html lang="id" class="light">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Klinik Hewan Satwa Sehat')</title>
+
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -102,8 +109,9 @@
             }
         }
 
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
+        // Sinkronkan ikon tema (bulan/matahari) dengan class 'dark' yang sudah
+        // ditentukan lebih dulu di <head>, sekarang setelah DOM (termasu ikon) siap.
+        if (document.documentElement.classList.contains('dark')) {
             document.getElementById('theme-icon')?.classList.replace('fa-moon', 'fa-sun');
         }
     </script>
