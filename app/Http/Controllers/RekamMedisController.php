@@ -12,6 +12,7 @@ use App\Models\Paramedis;
 use App\Models\Pelayanan;
 use App\Models\JenisHewan;
 use App\Exports\RekapLaporanExport;
+use App\Exports\RekapLaporanExport2;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Diagnosa;
@@ -313,8 +314,69 @@ class RekamMedisController extends Controller
     {
         return Excel::download(new RekapLaporanExport($request->all()), 'rekap-laporan-' . now()->format('Ymd_His') . '.xlsx');
     }
+
+    public function exportRekapLaporanView(Request $request)
+    {
+        $exportData = $this->resolveRekapLaporanViewData($request);
+
+        return Excel::download(
+            new RekapLaporanExport2(
+                $exportData['rekapData'],
+                $exportData['filterInfo'],
+                $exportData['totalEntri'],
+                $exportData['totalRetribusi'],
+                $exportData['totalHewanUnik']
+            ),
+            'rekap-laporan-baru-' . now()->format('Ymd_His') . '.xlsx'
+        );
+    }
     
     public function cetakRekapLaporan(Request $request)
+    {
+        $exportData = $this->resolveRekapLaporanViewData($request);
+
+        $pdf = Pdf::setOptions(['isPhpEnabled' => true])
+            ->loadView('export.pdf_rekap_laporan', [
+                'rekapData' => $exportData['rekapData'],
+                'totalEntri' => $exportData['totalEntri'],
+                'totalRetribusi' => $exportData['totalRetribusi'],
+                'totalHewanUnik' => $exportData['totalHewanUnik'],
+                'filterInfo' => $exportData['filterInfo'],
+            ])
+            ->setPaper('a4', 'landscape');
+
+        return response($pdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="rekap-laporan-' . now()->format('Ymd_His') . '.pdf"',
+        ]);
+    }
+
+    public function cetakRekapLaporan2(Request $request)
+    {
+        $exportData = $this->resolveRekapLaporanViewData($request);
+
+        $export = new RekapLaporanExport2(
+            $exportData['rekapData'],
+            $exportData['filterInfo'],
+            $exportData['totalEntri'],
+            $exportData['totalRetribusi'],
+            $exportData['totalHewanUnik']
+        );
+
+        $pdf = Pdf::setOptions(['isPhpEnabled' => true])
+            ->loadView('export.pdf_rekap_laporan2', [
+                'summaryRows' => $export->getSummaryRows(),
+                'filterInfo' => $exportData['filterInfo'],
+            ])
+            ->setPaper('a4', 'landscape');
+
+        return response($pdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="rekap-laporan-2-' . now()->format('Ymd_His') . '.pdf"',
+        ]);
+    }
+
+    private function resolveRekapLaporanViewData(Request $request): array
     {
         $search = $request->filled('search') ? $request->search : $request->q;
         $dokter = $request->filled('id_dokter') ? $request->id_dokter : $request->dokter;
@@ -414,19 +476,6 @@ class RekamMedisController extends Controller
             $filterInfo['Jenis Kelamin'] = $jenisKelamin;
         }
 
-        $pdf = Pdf::setOptions(['isPhpEnabled' => true])
-            ->loadView('export.pdf_rekap_laporan', compact(
-                'rekapData',
-                'totalEntri',
-                'totalRetribusi',
-                'totalHewanUnik',
-                'filterInfo'
-            ))
-            ->setPaper('a4', 'landscape');
-
-        return response($pdf->output(), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="rekap-laporan-' . now()->format('Ymd_His') . '.pdf"',
-        ]);
+        return compact('rekapData', 'filterInfo', 'totalEntri', 'totalRetribusi', 'totalHewanUnik');
     }
 }

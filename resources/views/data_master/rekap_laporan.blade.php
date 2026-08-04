@@ -42,37 +42,109 @@
                 </div>
             </div>
 
-                <div class="flex flex-wrap items-center justify-end gap-3 mt-2">
-                    <button type="button"
-                        id="btnFilterMore"
-                        class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-medium py-2 px-3 text-sm rounded-xl shadow-sm hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200 flex items-center gap-2">
-                        <i class="fa-solid fa-filter"></i>
-                        <span>Filter Lebih</span>
-                    </button>
+            <!-- Hidden input, ikut ke-submit bareng form GET, otomatis nempel di query string -->
+            <input type="hidden" name="ttd1_nama" id="ttd1_nama" value="{{ request('ttd1_nama') }}">
+            <input type="hidden" name="ttd1_nip" id="ttd1_nip" value="{{ request('ttd1_nip') }}">
+            <input type="hidden" name="ttd1_jabatan" id="ttd1_jabatan" value="{{ request('ttd1_jabatan') }}">
 
-                    <button type="submit"
-                        class="bg-brand-primary hover:bg-brand-dark text-white font-medium py-2 px-4 text-sm rounded-xl shadow-lg shadow-brand-primary/20 transition-all duration-200 flex items-center gap-2">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <span>Cari</span>
-                    </button>
+            <input type="hidden" name="ttd2_nama" id="ttd2_nama" value="{{ request('ttd2_nama') }}">
+            <input type="hidden" name="ttd2_nip" id="ttd2_nip" value="{{ request('ttd2_nip') }}">
+            <input type="hidden" name="ttd2_jabatan" id="ttd2_jabatan" value="{{ request('ttd2_jabatan') }}">
 
-                    <a href="{{ route('rekap-laporan.index') }}"
-                        class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium py-2 px-4 text-sm rounded-xl border border-gray-200 dark:border-gray-600 transition-all duration-200">
-                        Reset
-                    </a>
+            {{-- ====== BARIS PENANDATANGAN ====== --}}
+            <div class="flex flex-wrap items-center gap-2 mt-3">
+                <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider shrink-0">Penandatangan:</span>
 
-                    <a href="{{ route('rekap-laporan.export', request()->query()) }}"
-                        class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 text-sm rounded-xl shadow-lg shadow-green-600/20 transition-all duration-200 flex items-center gap-2">
-                        <i class="fa-solid fa-file-excel"></i>
-                        <span>Excel</span>
-                    </a>
+                <button type="button" id="btnTtd1"
+                    class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-medium py-2 px-3 text-sm rounded-xl shadow-sm hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200 flex items-center gap-2 w-44 shrink-0">
+                    <i class="fa-solid fa-signature text-brand-primary shrink-0"></i>
+                    <span id="btnTtd1Prefix" class="shrink-0 text-gray-400 dark:text-gray-500">TTD 1:</span>
+                    <span id="btnTtd1Label" class="truncate">Belum diisi</span>
+                </button>
 
-                    <a href="{{ route('rekap-laporan.pdf', request()->query()) }}"
-                        class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 text-sm rounded-xl shadow-lg shadow-green-600/20 transition-all duration-200 flex items-center gap-2">
-                        <i class="fa-solid fa-file-pdf"></i>
-                        PDF
-                    </a>
+                <button type="button" id="btnTtd2"
+                    class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-medium py-2 px-3 text-sm rounded-xl shadow-sm hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200 flex items-center gap-2 w-44 shrink-0">
+                    <i class="fa-solid fa-signature text-brand-primary shrink-0"></i>
+                    <span id="btnTtd2Prefix" class="shrink-0 text-gray-400 dark:text-gray-500">TTD 2:</span>
+                    <span id="btnTtd2Label" class="truncate">Belum diisi</span>
+                </button>
+
+                <button type="button"
+                    id="btnFilterMore"
+                    class="ml-auto bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-medium py-2 px-3 text-sm rounded-xl shadow-sm hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-filter"></i>
+                    <span>Filter Lebih</span>
+                </button>
+
+                <button type="submit"
+                    class="bg-brand-primary hover:bg-brand-dark text-white font-medium py-2 px-4 text-sm rounded-xl shadow-lg shadow-brand-primary/20 transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Cari</span>
+                </button>
+
+                <a href="{{ route('rekap-laporan.index') }}"
+                    class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium py-2 px-4 text-sm rounded-xl border border-gray-200 dark:border-gray-600 transition-all duration-200">
+                    Reset
+                </a>
+
+                <!-- Excel: split button -->
+                <div class="relative inline-flex" data-dropdown>
+                    <div class="flex rounded-xl shadow-lg shadow-green-600/20 overflow-hidden">
+                        <a href="{{ route('rekap-laporan.export', request()->query()) }}"
+                            class="js-export-link bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 text-sm transition-all duration-200 flex items-center gap-2">
+                            <i class="fa-solid fa-file-excel"></i>
+                            Excel
+                        </a>
+                        <button type="button" data-dropdown-toggle
+                            class="bg-green-600 hover:bg-green-700 text-white py-2 px-2.5 border-l border-green-500/40 transition-all duration-200">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </button>
+                    </div>
+
+                    <div data-dropdown-menu
+                        class="hidden absolute right-0 top-full mt-2 w-36 bg-white dark:bg-gray-700 rounded-xl shadow-lg border border-gray-100 dark:border-gray-600 py-1 z-50">
+                        <a href="{{ route('rekap-laporan.export', request()->query()) }}"
+                            class="js-export-link flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <i class="fa-solid fa-file-excel text-green-600"></i>
+                            Excel Rincian
+                        </a>
+                        <a href="{{ route('rekap-laporan.export-view', request()->query()) }}"
+                            class="js-export-link flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <i class="fa-solid fa-file-excel text-green-600"></i>
+                            Excel Rekapitulasi
+                        </a>
+                    </div>
                 </div>
+
+                <!-- PDF: split button -->
+                <div class="relative inline-flex" data-dropdown>
+                    <div class="flex rounded-xl shadow-lg shadow-red-600/20 overflow-hidden">
+                        <a href="{{ route('rekap-laporan.pdf', request()->query()) }}"
+                            class="js-export-link bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 text-sm transition-all duration-200 flex items-center gap-2">
+                            <i class="fa-solid fa-file-pdf"></i>
+                            PDF
+                        </a>
+                        <button type="button" data-dropdown-toggle
+                            class="bg-red-600 hover:bg-red-700 text-white py-2 px-2.5 border-l border-red-500/40 transition-all duration-200">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </button>
+                    </div>
+
+                    <div data-dropdown-menu
+                        class="hidden absolute right-0 top-full mt-2 w-36 bg-white dark:bg-gray-700 rounded-xl shadow-lg border border-gray-100 dark:border-gray-600 py-1 z-50">
+                        <a href="{{ route('rekap-laporan.pdf', request()->query()) }}"
+                            class="js-export-link flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <i class="fa-solid fa-file-pdf text-red-600"></i>
+                            PDF Rincian
+                        </a>
+                        <a href="{{ route('rekap-laporan.pdf2', request()->query()) }}"
+                            class="js-export-link flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <i class="fa-solid fa-file-pdf text-red-600"></i>
+                            PDF Rekapitulasi
+                        </a>
+                    </div>
+                </div>
+            </div>
 
             <div id="filter-more-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-4 py-6">
                 <div class="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -254,6 +326,80 @@
         </div>
     </div>
 </div>
+
+{{-- ====== MODAL PENANDATANGAN 1 ====== --}}
+<div id="ttd-modal-1" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-4 py-6">
+    <div class="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-base font-semibold text-gray-900 dark:text-white">Penandatangan 1</h3>
+            <button type="button" class="ttd-modal-close text-gray-500 hover:text-gray-700 dark:hover:text-gray-300" data-target="1">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="px-6 py-5 space-y-3">
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Nama</label>
+                <input type="text" id="ttdForm1Nama" placeholder="Contoh: Budi Santoso"
+                    class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">NIP <span class="normal-case text-gray-400">(opsional)</span></label>
+                <input type="text" id="ttdForm1Nip" placeholder="19xxxxxxxxxxxxxxxx"
+                    class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Jabatan <span class="normal-case text-gray-400">(opsional)</span></label>
+                <input type="text" id="ttdForm1Jabatan" placeholder="Contoh: Kepala Dinas Ketahanan Pangan dan Pertanian"
+                    class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary">
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex justify-end gap-3">
+            <button type="button" class="ttd-modal-close bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium py-2.5 px-5 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600" data-target="1">
+                Batal
+            </button>
+            <button type="button" id="ttdSave1" class="bg-brand-primary hover:bg-brand-dark text-white font-medium py-2.5 px-5 rounded-xl">
+                Simpan
+            </button>
+        </div>
+    </div>
+</div>
+
+{{-- ====== MODAL PENANDATANGAN 2 ====== --}}
+<div id="ttd-modal-2" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-4 py-6">
+    <div class="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-base font-semibold text-gray-900 dark:text-white">Penandatangan 2</h3>
+            <button type="button" class="ttd-modal-close text-gray-500 hover:text-gray-700 dark:hover:text-gray-300" data-target="2">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="px-6 py-5 space-y-3">
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Nama</label>
+                <input type="text" id="ttdForm2Nama" placeholder="Contoh: Siti Aminah"
+                    class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">NIP <span class="normal-case text-gray-400">(opsional)</span></label>
+                <input type="text" id="ttdForm2Nip" placeholder="19xxxxxxxxxxxxxxxx"
+                    class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Jabatan <span class="normal-case text-gray-400">(opsional)</span></label>
+                <input type="text" id="ttdForm2Jabatan" placeholder="Contoh: Kepala UPT Pusat Kesehatan Hewan"
+                    class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary">
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex justify-end gap-3">
+            <button type="button" class="ttd-modal-close bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium py-2.5 px-5 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600" data-target="2">
+                Batal
+            </button>
+            <button type="button" id="ttdSave2" class="bg-brand-primary hover:bg-brand-dark text-white font-medium py-2.5 px-5 rounded-xl">
+                Simpan
+            </button>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('styles')
@@ -266,27 +412,26 @@
 
 @push('scripts')
 <script>
-    document.getElementById('btnExport')?.addEventListener('click', function () {
-        const button = this;
-        const originalHtml = button.innerHTML;
+    document.querySelectorAll('[data-dropdown]').forEach(function (wrapper) {
+        const toggleBtn = wrapper.querySelector('[data-dropdown-toggle]');
+        const menu = wrapper.querySelector('[data-dropdown-menu]');
 
-        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Memproses...</span>';
-        button.disabled = true;
-        button.classList.add('opacity-80', 'cursor-not-allowed');
+        toggleBtn?.addEventListener('click', function (event) {
+            event.stopPropagation();
 
-        setTimeout(() => {
-            button.innerHTML = '<i class="fa-solid fa-check"></i><span>Berhasil Diunduh</span>';
-            button.classList.replace('bg-green-600', 'bg-brand-dark');
-            button.classList.replace('hover:bg-green-700', 'hover:bg-brand-dark');
+            // tutup dropdown lain
+            document.querySelectorAll('[data-dropdown-menu]').forEach(function (otherMenu) {
+                if (otherMenu !== menu) otherMenu.classList.add('hidden');
+            });
 
-            setTimeout(() => {
-                button.innerHTML = originalHtml;
-                button.disabled = false;
-                button.classList.remove('opacity-80', 'cursor-not-allowed');
-                button.classList.replace('bg-brand-dark', 'bg-green-600');
-                button.classList.replace('hover:bg-brand-dark', 'hover:bg-green-700');
-            }, 3000);
-        }, 1500);
+            menu.classList.toggle('hidden');
+        });
+    });
+
+    document.addEventListener('click', function () {
+        document.querySelectorAll('[data-dropdown-menu]').forEach(function (menu) {
+            menu.classList.add('hidden');
+        });
     });
 
     const filterMoreBtn = document.getElementById('btnFilterMore');
@@ -307,6 +452,145 @@
         if (event.target === filterMoreModal) {
             toggleFilterModal(false);
         }
+    });
+
+    // ====== PENANDATANGAN — localStorage ======
+    function loadTtd(index) {
+        try {
+            return JSON.parse(localStorage.getItem('ttd' + index) || 'null') || { nama: '', nip: '', jabatan: '' };
+        } catch (e) {
+            return { nama: '', nip: '', jabatan: '' };
+        }
+    }
+
+    function saveTtd(index, data) {
+        localStorage.setItem('ttd' + index, JSON.stringify(data));
+    }
+
+    function updateTtdButton(index) {
+        const data = loadTtd(index);
+        const label = document.getElementById('btnTtd' + index + 'Label');
+        const prefix = document.getElementById('btnTtd' + index + 'Prefix');
+        if (label) {
+            label.textContent = (data.nama ? data.nama : 'Belum diisi');
+            label.title = data.nama || '';
+        }
+        if (prefix) {
+            prefix.classList.toggle('hidden', !!data.nama);
+        }
+
+        const hiddenNama = document.getElementById('ttd' + index + '_nama');
+        const hiddenNip = document.getElementById('ttd' + index + '_nip');
+        const hiddenJabatan = document.getElementById('ttd' + index + '_jabatan');
+
+        // hanya isi otomatis dari localStorage kalau hidden input masih kosong
+        // (biar nilai dari query string / hasil submit form tetap diutamakan)
+        if (hiddenNama && !hiddenNama.value) hiddenNama.value = data.nama || '';
+        if (hiddenNip && !hiddenNip.value) hiddenNip.value = data.nip || '';
+        if (hiddenJabatan && !hiddenJabatan.value) hiddenJabatan.value = data.jabatan || '';
+    }
+
+    function openTtdModal(index) {
+        const data = loadTtd(index);
+        document.getElementById('ttdForm' + index + 'Nama').value = data.nama || '';
+        document.getElementById('ttdForm' + index + 'Nip').value = data.nip || '';
+        document.getElementById('ttdForm' + index + 'Jabatan').value = data.jabatan || '';
+
+        const modal = document.getElementById('ttd-modal-' + index);
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeTtdModal(index) {
+        const modal = document.getElementById('ttd-modal-' + index);
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    // Update href semua tombol Excel/PDF biar bawa data TTD terbaru, tanpa reload halaman
+    function refreshExportLinks() {
+        const ttd1 = loadTtd(1);
+        const ttd2 = loadTtd(2);
+
+        const params = {
+            ttd1_nama: ttd1.nama || '',
+            ttd1_nip: ttd1.nip || '',
+            ttd1_jabatan: ttd1.jabatan || '',
+            ttd2_nama: ttd2.nama || '',
+            ttd2_nip: ttd2.nip || '',
+            ttd2_jabatan: ttd2.jabatan || '',
+        };
+
+        document.querySelectorAll('.js-export-link').forEach(function (link) {
+            const url = new URL(link.href, window.location.origin);
+            Object.keys(params).forEach(function (key) {
+                if (params[key]) {
+                    url.searchParams.set(key, params[key]);
+                } else {
+                    url.searchParams.delete(key);
+                }
+            });
+            link.href = url.toString();
+        });
+    }
+
+    // Init: tampilkan data tersimpan pas halaman dibuka
+    updateTtdButton(1);
+    updateTtdButton(2);
+    refreshExportLinks();
+
+    document.getElementById('btnTtd1')?.addEventListener('click', () => openTtdModal(1));
+    document.getElementById('btnTtd2')?.addEventListener('click', () => openTtdModal(2));
+
+    document.querySelectorAll('.ttd-modal-close').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            closeTtdModal(this.dataset.target);
+        });
+    });
+
+    document.getElementById('ttdSave1')?.addEventListener('click', function () {
+        const data = {
+            nama: document.getElementById('ttdForm1Nama').value.trim(),
+            nip: document.getElementById('ttdForm1Nip').value.trim(),
+            jabatan: document.getElementById('ttdForm1Jabatan').value.trim(),
+        };
+        saveTtd(1, data);
+
+        document.getElementById('ttd1_nama').value = data.nama;
+        document.getElementById('ttd1_nip').value = data.nip;
+        document.getElementById('ttd1_jabatan').value = data.jabatan;
+
+        document.getElementById('btnTtd1Label').textContent = (data.nama || 'Belum diisi');
+        document.getElementById('btnTtd1Label').title = data.nama || '';
+        document.getElementById('btnTtd1Prefix').classList.toggle('hidden', !!data.nama);
+        refreshExportLinks();
+        closeTtdModal(1);
+    });
+
+    document.getElementById('ttdSave2')?.addEventListener('click', function () {
+        const data = {
+            nama: document.getElementById('ttdForm2Nama').value.trim(),
+            nip: document.getElementById('ttdForm2Nip').value.trim(),
+            jabatan: document.getElementById('ttdForm2Jabatan').value.trim(),
+        };
+        saveTtd(2, data);
+
+        document.getElementById('ttd2_nama').value = data.nama;
+        document.getElementById('ttd2_nip').value = data.nip;
+        document.getElementById('ttd2_jabatan').value = data.jabatan;
+
+        document.getElementById('btnTtd2Label').textContent = (data.nama || 'Belum diisi');
+        document.getElementById('btnTtd2Label').title = data.nama || '';
+        document.getElementById('btnTtd2Prefix').classList.toggle('hidden', !!data.nama);
+        refreshExportLinks();
+        closeTtdModal(2);
+    });
+
+    document.getElementById('ttd-modal-1')?.addEventListener('click', function (e) {
+        if (e.target === this) closeTtdModal(1);
+    });
+    document.getElementById('ttd-modal-2')?.addEventListener('click', function (e) {
+        if (e.target === this) closeTtdModal(2);
     });
 </script>
 @endpush
