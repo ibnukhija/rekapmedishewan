@@ -89,6 +89,13 @@
                 <i class="fa-solid fa-file-contract w-5 text-center flex-shrink-0 group-hover:text-brand-primary dark:group-hover:text-brand-light transition-colors"></i>
                 <span class="menu-text whitespace-nowrap">Rekap Laporan</span>
             </a>
+
+            <p class="menu-header px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-6 whitespace-nowrap">Pengaturan</p>
+
+            <a href="{{ route('user.index') }}" class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('user.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
+                <i class="fa-solid fa-users-gear w-5 text-center flex-shrink-0 group-hover:text-brand-primary dark:group-hover:text-brand-light transition-colors"></i>
+                <span class="menu-text whitespace-nowrap">Kelola Akun</span>
+            </a>
         @endif
         <!-- AKHIR AREA ADMIN -->
 

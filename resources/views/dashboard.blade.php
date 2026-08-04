@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard - Klinik Hewan Satwa Sehat')
+@section('title', 'Dashboard - SALPUKAT')
 @section('page_title', 'Dashboard')
 
 @section('content')
@@ -9,7 +9,7 @@
         <div>
             <h2 class="text-2xl sm:text-3xl font-bold mb-2">Selamat Datang, {{ Auth::user()->nama ?? 'Admin' }}! 👋</h2>
             <p class="text-white/90 max-w-2xl text-sm sm:text-base leading-relaxed">
-                Sistem Informasi Rekam Medis Klinik Hewan <strong>Satwa Sehat Kota Kediri</strong>.
+                SALPUKAT — Sistem Administrasi dan Laporan Pusat Kesehatan Veteriner Kota Kediri.
             </p>
         </div>
     </div>
@@ -18,13 +18,13 @@
 
 <div class="grid lg:grid-cols-2 gap-6 mb-8">
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden">
-        <img src="{{ asset('img/foto puskes.png') }}" class="w-full h-full object-cover hover:scale-105 transition duration-500" alt="Klinik Hewan">
+        <img src="{{ asset('img/foto puskes.png') }}" class="w-full h-full object-cover hover:scale-105 transition duration-500" alt="Pusat Kesehatan Veteriner">
     </div>
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8 flex flex-col justify-center">
-        <span class="text-brand-primary font-semibold uppercase tracking-wider text-sm">Tentang Klinik</span>
-        <h2 class="text-3xl font-bold mt-2 mb-4">Klinik Hewan Satwa Sehat Kota Kediri</h2>
+        <span class="text-brand-primary font-semibold uppercase tracking-wider text-sm">Tentang SALPUKAT</span>
+        <h2 class="text-3xl font-bold mt-2 mb-4">Sistem Administrasi dan Laporan Pusat Kesehatan Veteriner</h2>
         <p class="text-gray-600 dark:text-gray-300 leading-8">
-            Klinik Hewan Satwa Sehat merupakan UPT Pusat Kesehatan Hewan Kota Kediri yang menyediakan pelayanan pemeriksaan, pengobatan, vaksinasi, konsultasi, hingga rekam medis untuk berbagai jenis hewan peliharaan.
+            SALPUKAT merupakan sistem administrasi dan pelaporan untuk UPT Pusat Kesehatan Hewan Kota Kediri, yang menyediakan pelayanan pemeriksaan, pengobatan, vaksinasi, konsultasi, hingga rekam medis untuk berbagai jenis hewan peliharaan.
         </p>
         <div class="grid grid-cols-2 gap-4 mt-6">
             <div class="flex items-start gap-3">
@@ -41,7 +41,7 @@
             </div>
             <div class="flex items-center gap-3">
                 <i class="fa-solid fa-paw text-brand-primary text-xl"></i>
-                <span class="text-sm">Melayani Berbagai Jenis Hewan Peliharaan</span>
+                <span class="text-sm">Melayani Berbagai Jenis Hewan</span>
             </div>
         </div>
     </div>

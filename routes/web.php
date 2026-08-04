@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\DokterController;
@@ -35,18 +36,33 @@ Route::middleware('auth')->group(function () {
 
     // HANYA BISA DIAKSES ADMIN ---
     Route::middleware('role:admin')->group(function () {
-        Route::resource('dokter', DokterController::class);
-        Route::resource('paramedis', ParamedisController::class);
+        Route::resource('user', UserController::class)
+            ->parameters(['user' => 'id_user'])
+            ->except(['show', 'create', 'edit']);
+
+        Route::resource('dokter', DokterController::class)
+            ->except(['show', 'create', 'edit']);
+
+        Route::resource('paramedis', ParamedisController::class)
+            ->except(['show', 'create', 'edit']);
+
         Route::resource('pelayanan', PelayananController::class)
             ->parameters(['pelayanan' => 'id_pelayanan'])
             ->except(['show', 'create', 'edit']);
+
         Route::resource('jenis-hewan', JenisHewanController::class)
             ->parameters(['jenis-hewan' => 'id_jenis'])
             ->names('jenis_hewan')
             ->except(['show', 'create', 'edit']);
-        Route::resource('diagnosa', DiagnosaController::class);
-        Route::resource('anamnesa', AnamnesaController::class);
-        Route::resource('obat', ObatController::class);
+
+        Route::resource('diagnosa', DiagnosaController::class)
+            ->except(['show', 'create', 'edit']);
+
+        Route::resource('anamnesa', AnamnesaController::class)
+            ->except(['show', 'create', 'edit']);
+
+        Route::resource('obat', ObatController::class)
+            ->except(['show', 'create', 'edit']);
 
         Route::get('/rekap-laporan', [RekamMedisController::class, 'rekapLaporan'])->name('rekap-laporan.index');
         Route::get('/rekap-laporan/export', [RekamMedisController::class, 'exportRekapLaporan'])->name('rekap-laporan.export');
