@@ -90,7 +90,105 @@
     </table>
 </div>
 
-@push('scripts')
+{{-- Tabel ringkasan kasus tertinggi per jenis hewan --}}
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 mb-8 overflow-x-auto">
+    <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Ringkasan Kasus Tertinggi per Jenis Hewan</h3>
+    <table class="min-w-full text-sm">
+        <thead>
+            <tr class="text-left text-xs text-gray-400 uppercase">
+                <th rowspan="2" class="py-2 pr-4 align-bottom border-b border-gray-100 dark:border-gray-700">No</th>
+                <th rowspan="2" class="py-2 pr-4 align-bottom border-b border-gray-100 dark:border-gray-700">Jenis</th>
+                <th rowspan="2" class="py-2 pr-4 align-bottom border-b border-gray-100 dark:border-gray-700">Total</th>
+                <th colspan="5" class="py-2 pr-4 text-center border-b border-gray-100 dark:border-gray-700">Kasus</th>
+            </tr>
+            <tr class="text-left text-xs text-gray-400 uppercase border-b border-gray-100 dark:border-gray-700">
+                <th class="py-2 pr-4">Tertinggi</th>
+                <th class="py-2 pr-4">Jumlah</th>
+                <th class="py-2 pr-4">Asal Kota Kediri</th>
+                <th class="py-2 pr-4">Jml Kelurahan Terdampak</th>
+                <th class="py-2 pr-4">Asal Luar Kota Kediri</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($jenisBreakdown as $i => $jb)
+                <tr class="border-b border-gray-50 dark:border-gray-700/50">
+                    <td class="py-2 pr-4">{{ $i + 1 }}</td>
+                    <td class="py-2 pr-4">{{ $jb['jenis'] }}</td>
+                    <td class="py-2 pr-4 font-mono font-semibold">{{ $jb['total'] }}</td>
+                    <td class="py-2 pr-4">{{ $jb['diagnosa_tertinggi'] ?? '-' }}</td>
+                    <td class="py-2 pr-4 font-mono">{{ $jb['jumlah_tertinggi'] }}</td>
+                    <td class="py-2 pr-4 font-mono">{{ $jb['asal_kota'] }}</td>
+                    <td class="py-2 pr-4 font-mono">{{ $jb['kelurahan_terdampak'] }}</td>
+                    <td class="py-2 pr-4 font-mono">{{ $jb['asal_luar'] }}</td>
+                </tr>
+            @empty
+                <tr><td colspan="8" class="py-6 text-center text-gray-400">Belum ada data.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
 
+{{-- Diagram batang top 5 kasus per jenis hewan --}}
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 mb-8">
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <h3 class="font-semibold text-gray-900 dark:text-white">Top 5 Kasus per Jenis Hewan</h3>
+        <select id="chartJenisSelect"
+            class="rounded-lg border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm">
+            @foreach($chartData->keys() as $jn)
+                <option value="{{ $jn }}">{{ $jn }}</option>
+            @endforeach
+        </select>
+    </div>
+    <div style="height:350px;">
+        <canvas id="kasusChart"></canvas>
+    </div>
+</div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+    const chartData = @json($chartData);
+    const jenisSelect = document.getElementById('chartJenisSelect');
+    const ctx = document.getElementById('kasusChart')?.getContext('2d');
+
+    const warna = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#94a3b8'];
+
+    let kasusChart;
+
+    function renderChart(jenis) {
+        const dataset = chartData[jenis] || { labels: [], data: [] };
+
+        if (kasusChart) {
+            kasusChart.data.labels = dataset.labels;
+            kasusChart.data.datasets[0].data = dataset.data;
+            kasusChart.update();
+            return;
+        }
+
+        kasusChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: dataset.labels,
+                datasets: [{
+                    label: 'Jumlah Kasus',
+                    data: dataset.data,
+                    backgroundColor: warna,
+                    borderRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    }
+
+    if (ctx && jenisSelect && jenisSelect.options.length > 0) {
+        renderChart(jenisSelect.value);
+        jenisSelect.addEventListener('change', (e) => renderChart(e.target.value));
+    }
+</script>
 @endpush
 @endsection

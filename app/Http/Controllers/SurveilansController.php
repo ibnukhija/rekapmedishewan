@@ -64,11 +64,72 @@ class SurveilansController extends Controller
 
         $rekamTerbaru = $rows->sortByDesc('tanggal')->take(10)->values();
 
+        // ==== Ringkasan kasus tertinggi per jenis hewan ====
+        $jenisBreakdown = $rows->groupBy('jenis')->map(function ($group, $jenisNama) {
+            $total = $group->count();
+
+            $countPerDiagnosa = $group->groupBy('diagnosa')
+                ->map(fn ($g) => $g->count())
+                ->sortDesc();
+
+            $diagnosaTertinggi = $countPerDiagnosa->keys()->first();
+            $jumlahTertinggi   = $countPerDiagnosa->first() ?? 0;
+
+            $kasusTertinggi = $diagnosaTertinggi
+                ? $group->where('diagnosa', $diagnosaTertinggi)
+                : collect();
+
+            $dariKota = $kasusTertinggi->filter(
+                fn ($r) => str_contains($r->daerah, 'Kota Kediri')
+            );
+
+            $asalKota = $dariKota->count();
+            $asalLuar = $kasusTertinggi->count() - $asalKota;
+
+            $kelurahanTerdampak = $dariKota->map(function ($r) {
+                if (preg_match('/Kelurahan\s+([^,]+),/i', $r->daerah, $m)) {
+                    return trim($m[1]);
+                }
+                return trim($r->daerah);
+            })->unique()->count();
+
+            return [
+                'jenis'               => $jenisNama,
+                'total'               => $total,
+                'diagnosa_tertinggi'  => $diagnosaTertinggi,
+                'jumlah_tertinggi'    => $jumlahTertinggi,
+                'asal_kota'           => $asalKota,
+                'kelurahan_terdampak' => $kelurahanTerdampak,
+                'asal_luar'           => $asalLuar,
+            ];
+        })->sortByDesc('total')->values();
+
+        // ==== Data diagram batang: top 5 diagnosa + "Lain-lain" per jenis hewan ====
+        $chartData = $rows->groupBy('jenis')->map(function ($group) {
+            $counts = $group->groupBy('diagnosa')
+                ->map(fn ($g) => $g->count())
+                ->sortDesc();
+
+            $top5 = $counts->take(5);
+            $sisa = $counts->slice(5)->sum();
+
+            $labels = $top5->keys()->values()->toArray();
+            $data   = $top5->values()->toArray();
+
+            if ($sisa > 0) {
+                $labels[] = 'Lain-lain';
+                $data[]   = $sisa;
+            }
+
+            return ['labels' => $labels, 'data' => $data];
+        });
+
         $daftarDaerah = DB::table('pemilik')->whereNotNull('alamat')->distinct()->orderBy('alamat')->pluck('alamat');
         $daftarJenis  = DB::table('jenis_hewan')->orderBy('nama_jenis')->pluck('nama_jenis');
 
         return view('surveilans.index', compact(
             'matrix', 'trend', 'ringkasan', 'rekamTerbaru',
+            'jenisBreakdown', 'chartData',
             'daftarDaerah', 'daftarJenis', 'daerah', 'jenis', 'periode'
         ));
     }
