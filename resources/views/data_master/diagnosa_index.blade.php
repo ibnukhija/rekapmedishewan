@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Data Diagnosa - Klinik Hewan Satwa Sehat')
+@section('title', 'Kelola Data Diagnosa - SALPUKAT')
 @section('page_title', 'Kelola Data Diagnosa')
 
 @push('styles')

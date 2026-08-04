@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Klinik Hewan Satwa Sehat</title>
+    <title>Login - SALPUKAT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -64,11 +64,8 @@
                     <i class="fa-solid fa-paw text-5xl text-white"></i>
                 </div>
                 <h1 class="text-3xl font-bold tracking-wide mb-2 leading-tight">
-                    Klinik Hewan<br>Satwa Sehat
+                    S-ALPUKAT
                 </h1>
-                <p class="text-brand-bg text-sm font-medium tracking-widest uppercase mb-6">
-                    Kota Kediri
-                </p>
                 <div class="w-16 h-1 bg-white/50 rounded-full mb-6 mx-auto"></div>
                 <p class="text-white/80 text-sm max-w-[250px] font-semibold leading-relaxed">
                     UPT Pusat Kesehatan Hewan<br>Dinas Ketahanan Pangan Dan Pertanian Kota Kediri.
@@ -157,11 +154,8 @@
         // Script untuk menampilkan loading saat form di-submit sungguhan ke server
         function showLoading(e) {
             const btn = e.target.querySelector('button[type="submit"]');
-            // Ganti teks tombol menjadi proses loading
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...';
-            // Hindari klik berulang
             btn.classList.add('opacity-80', 'cursor-not-allowed');
-            // Catatan: Tidak ada e.preventDefault() di sini agar form tetap terkirim ke Laravel
         }
     </script>
 </body>

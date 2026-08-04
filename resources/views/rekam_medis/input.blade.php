@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Input Rekam Medis - Klinik Hewan Satwa Sehat')
+@section('title', 'Input Rekam Medis - SALPUKAT')
 @section('page_title', 'Input Rekam Medis')
 
 @push('styles')
