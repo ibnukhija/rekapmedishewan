@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Data Jenis Hewan - SALPUKAT')
+@section('title', 'Kelola Data Jenis Hewan - S-ALPUKAT')
 @section('page_title', 'Kelola Data Jenis Hewan')
 
 @push('styles')

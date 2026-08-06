@@ -16,12 +16,10 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, $role): Response
     {
-        // Cek apakah user sudah login dan rolenya sesuai dengan parameter di route
         if (Auth::check() && Auth::user()->role === $role) {
             return $next($request);
         }
 
-        // Jika gagal/bukan admin, kembalikan ke dashboard dengan pesan error
-        return redirect()->route('dashboard')->with('error', 'Akses ditolak! Anda tidak memiliki izin untuk membuka halaman ini.');
+        abort(403);
     }
 }

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Rekap Laporan - SALPUKAT')
+@section('title', 'Rekap Laporan - S-ALPUKAT')
 @section('page_title', 'Rekapitulasi Laporan')
 
 @section('content')

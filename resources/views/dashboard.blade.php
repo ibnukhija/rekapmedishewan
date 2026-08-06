@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard - SALPUKAT')
+@section('title', 'Dashboard - S-ALPUKAT')
 @section('page_title', 'Dashboard')
 
 @section('content')
@@ -9,7 +9,7 @@
         <div>
             <h2 class="text-2xl sm:text-3xl font-bold mb-2">Selamat Datang, {{ Auth::user()->nama ?? 'Admin' }}! 👋</h2>
             <p class="text-white/90 max-w-2xl text-sm sm:text-base leading-relaxed">
-                SALPUKAT — Sistem Administrasi dan Laporan Pusat Kesehatan Veteriner Kota Kediri.
+                S-ALPUKAT — Sistem Administrasi dan Laporan Pusat Kesehatan Veteriner Kota Kediri.
             </p>
         </div>
     </div>

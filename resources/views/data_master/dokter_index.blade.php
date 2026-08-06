@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Data Dokter - SALPUKAT')
+@section('title', 'Kelola Data Dokter - S-ALPUKAT')
 @section('page_title', 'Kelola Data Dokter')
 
 @push('styles')
