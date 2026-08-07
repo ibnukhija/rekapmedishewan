@@ -167,6 +167,21 @@
             @endforeach
         </tbody>
     </table>
+
+    <table width="100%" style="border:none; margin-top:8px;">
+        <tr>
+            <td style="border:none; width:33%; text-align:left; font-size:9px; font-style:italic;">
+                Dicetak oleh: {{ auth()->user()->name ?? 'Admin' }}
+            </td>
+            <td style="border:none; width:34%; text-align:center; font-size:9px; font-style:italic;">
+                Dinas Ketahanan Pangan dan Pertanian
+            </td>
+            <td style="border:none; width:33%; text-align:right; font-size:9px; font-style:italic;">
+                Total Retribusi: Rp {{ number_format($totalRetribusi, 0, ',', '.') }}
+            </td>
+        </tr>
+    </table>
+
     <script type="text/php">
     if (isset($pdf)) {
         $text = "Halaman {PAGE_NUM} dari {PAGE_COUNT}";
