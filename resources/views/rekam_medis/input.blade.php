@@ -5,7 +5,6 @@
 
 @push('styles')
 <style>
-    /* Custom form focus ring */
     .form-input-focus:focus {
         box-shadow: 0 0 0 2px rgba(64, 145, 108, 0.2);
     }
@@ -59,7 +58,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                         </div>
-                        <input type="text" id="searchPasien" autocomplete="off" placeholder="Ketik minimal 2 huruf... contoh: Milo, 123, Andi, 08123456789"
+                        <input type="text" id="searchPasien" autocomplete="off" placeholder="Ketik minimal 2 huruf... contoh: Milo, 00123, Andi, 08123456789"
                             class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm">
                     </div>
 
@@ -285,7 +284,7 @@
             <div class="p-6 space-y-6">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- 1. Anamnesa (Dropdown Search Multi + Tabel) -->
+                    <!-- 1. Anamnesa (Dropdown Search Multi + Tabel + Lain-lain) -->
                     <div id="anamnesaMultiSelect" class="space-y-1.5">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pilih Anamnesa (Bisa &gt; 1)</label>
                         <div class="relative">
@@ -301,6 +300,13 @@
                                 @empty
                                     <div class="px-4 py-3 text-sm text-gray-400">Tidak ada data anamnesa</div>
                                 @endforelse
+                                <!-- Baris "Lain-lain": ketik nama baru, langsung ditambahkan ke daftar pilihan -->
+                                <div class="border-t border-gray-100 dark:border-gray-700 p-2 flex items-center gap-2 bg-gray-50/50 dark:bg-gray-900/40 sticky bottom-0">
+                                    <input type="text" class="ms-lain-input flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary" placeholder="Lain-lain: tulis nama baru...">
+                                    <button type="button" class="ms-lain-add px-3 py-2 bg-brand-primary hover:bg-brand-dark text-white rounded-lg text-xs font-medium flex-shrink-0">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class="ms-hidden"></div>
@@ -315,20 +321,44 @@
                         </div>
                     </div>
 
-                    <!-- 2. Diagnosa (Dropdown Tunggal) -->
-                    <div class="space-y-1.5">
-                        <label for="diagnosa" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pilih Diagnosa</label>
-                        <select id="diagnosa" name="diagnosa"
-                            class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm appearance-none cursor-pointer">
-                            <option value="" disabled selected>Pilih Diagnosa...</option>
-                            @foreach($diagnosas as $d)
-                                <option value="{{ $d->id_diagnosa }}">{{ $d->nama_diagnosa }}</option>
-                            @endforeach
-                        </select>
+                    <!-- 2. Diagnosa (Searchable Single-select + Lain-lain sticky) -->
+                    <div id="diagnosaSingleSelect" class="space-y-1.5">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pilih Diagnosa</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-magnifying-glass text-gray-400 text-sm"></i>
+                            </div>
+                            
+                            <!-- pr-14 agar teks yang panjang tidak tertutup tulisan BARU -->
+                            <input type="text" class="ss-search w-full pl-10 pr-14 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm"
+                                placeholder="Cari diagnosa..." autocomplete="off">
+                            
+                            <!-- Badge "BARU" yang akan dimunculkan lewat JS -->
+                            <div class="ss-badge hidden absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                <span class="text-[10px] uppercase tracking-wide text-brand-primary dark:text-brand-light font-semibold">Baru</span>
+                            </div>
+                            
+                            <div class="ss-dropdown hidden absolute z-20 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                                @forelse($diagnosas as $d)
+                                    <button type="button" data-id="{{ $d->id_diagnosa }}" data-name="{{ $d->nama_diagnosa }}"
+                                        class="ss-option w-full text-left px-4 py-2.5 hover:bg-brand-primary/5 dark:hover:bg-gray-700/50 text-sm text-gray-700 dark:text-gray-200 transition-colors">{{ $d->nama_diagnosa }}</button>
+                                @empty
+                                    <div class="px-4 py-3 text-sm text-gray-400">Tidak ada data diagnosa</div>
+                                @endforelse
+                                
+                                <div class="border-t border-gray-100 dark:border-gray-700 p-2 flex items-center gap-2 bg-gray-50/50 dark:bg-gray-900/40 sticky bottom-0">
+                                    <input type="text" id="diagnosa_lain" name="diagnosa_lain" class="ss-lain-input flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary" placeholder="Lain-lain: tulis diagnosa baru...">
+                                    <button type="button" class="ss-lain-add px-3 py-2 bg-brand-primary hover:bg-brand-dark text-white rounded-lg text-xs font-medium flex-shrink-0">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" class="ss-hidden" id="diagnosa" name="diagnosa" value="">
                     </div>
                 </div>
 
-                <!-- 3. Terapi / Obat (Dropdown Search Multi + Tabel) -->
+                <!-- 3. Terapi / Obat (Dropdown Search Multi + Tabel + Lain-lain) -->
                 <div id="obatMultiSelect" class="space-y-1.5">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pilih Terapi / Obat (Bisa &gt; 1)</label>
                     <div class="relative">
@@ -344,6 +374,13 @@
                             @empty
                                 <div class="px-4 py-3 text-sm text-gray-400">Tidak ada data obat</div>
                             @endforelse
+                            <!-- Baris "Lain-lain" -->
+                            <div class="border-t border-gray-100 dark:border-gray-700 p-2 flex items-center gap-2 bg-gray-50/50 dark:bg-gray-900/40 sticky bottom-0">
+                                <input type="text" class="ms-lain-input flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary" placeholder="Lain-lain: tulis nama baru...">
+                                <button type="button" class="ms-lain-add px-3 py-2 bg-brand-primary hover:bg-brand-dark text-white rounded-lg text-xs font-medium flex-shrink-0">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="ms-hidden"></div>
@@ -432,8 +469,10 @@
 </div>
 @endsection
 
-
-
 @push('scripts')
-<script src="{{ asset('js/rekam-medis.js') }}"></script>
+<script>
+    // Menyimpan ID selanjutnya ke variabel global window agar bisa dibaca JS
+    window.NEXT_ID_HEWAN = {{ $nextIdHewan }};
+</script>
+<script src="{{ asset('js/rekam-medis.js') }}?v={{ time() }}"></script>
 @endpush

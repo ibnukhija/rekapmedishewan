@@ -21,10 +21,10 @@
         <img src="{{ asset('img/foto puskes.png') }}" class="w-full h-full object-cover hover:scale-105 transition duration-500" alt="Pusat Kesehatan Veteriner">
     </div>
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8 flex flex-col justify-center">
-        <span class="text-brand-primary font-semibold uppercase tracking-wider text-sm">Tentang SALPUKAT</span>
+        <span class="text-brand-primary font-semibold uppercase tracking-wider text-sm">Tentang S-ALPUKAT</span>
         <h2 class="text-3xl font-bold mt-2 mb-4">Sistem Administrasi dan Laporan Pusat Kesehatan Veteriner</h2>
         <p class="text-gray-600 dark:text-gray-300 leading-8">
-            SALPUKAT merupakan sistem administrasi dan pelaporan untuk UPT Pusat Kesehatan Hewan Kota Kediri, yang menyediakan pelayanan pemeriksaan, pengobatan, vaksinasi, konsultasi, hingga rekam medis untuk berbagai jenis hewan peliharaan.
+            S-ALPUKAT merupakan sistem administrasi dan pelaporan untuk UPT Pusat Kesehatan Hewan Kota Kediri, yang menyediakan pelayanan pemeriksaan, pengobatan, vaksinasi, konsultasi, hingga rekam medis untuk berbagai jenis hewan peliharaan.
         </p>
         <div class="grid grid-cols-2 gap-4 mt-6">
             <div class="flex items-start gap-3">

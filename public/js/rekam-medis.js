@@ -12,6 +12,13 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentHewanData = [];
     let currentPemilikData = [];
 
+    // Format ID Hewan, mis. 1 -> "00001"
+    function formatIdHewan(id) {
+        if (id === null || id === undefined || id === '') return '-----';
+        return String(id).padStart(6, '0');
+    }
+    window.formatIdHewan = formatIdHewan;
+
     let searchTimeout;
     if(searchInput) {
         searchInput.addEventListener('input', () => {
@@ -55,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <i class="fa-solid fa-paw"></i>
                 </div>
                 <div class="min-w-0">
-                    <p class="text-sm font-medium text-gray-800 dark:text-white truncate">${a.nama_hewan} <span class="text-gray-400 font-normal">· ID: ${a.id_hewan}</span></p>
+                    <p class="text-sm font-medium text-gray-800 dark:text-white truncate">${a.nama_hewan} <span class="text-gray-400 font-normal">· ID: ${formatIdHewan(a.id_hewan)}</span></p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Pemilik: ${owner.nama_pemilik} · ${owner.no_hp}</p>
                 </div>
             </button>`;
@@ -88,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         searchResults.innerHTML = html;
     }
 
-    // Ekspor fungsi ke global window agar bisa dipanggil dari atribut onclick di HTML
+
     window.renderSearchResults = renderSearchResults;
     window.selectExistingPet = selectExistingPet;
     window.selectOwnerForNewPet = selectOwnerForNewPet;
@@ -182,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setFieldsState([...pemilikFields, ...hewanFields], true);
         toggleAlamatMode();
         
-        patientCardStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Pasien Lama — Data Ditemukan';
+        patientCardStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Pasien Lama — Data Ditemukan <span class="opacity-75 font-normal">· ID Hewan: ' + formatIdHewan(pet.id_hewan) + '</span>';
         showPatientCard();
         filterPelayanan();
     }
@@ -201,7 +208,8 @@ document.addEventListener('DOMContentLoaded', function() {
         setFieldsState(['nama_pemilik', 'no_hp_pemilik', 'lokasi_dalam_kota', 'lokasi_luar_kota', 'alamat_kelurahan', 'alamat_manual'], true);
         setFieldsState(hewanFields, false);
 
-        patientCardStatus.innerHTML = '<i class="fa-solid fa-plus"></i> Pemilik Lama — Hewan Baru';
+        patientCardStatus.innerHTML = '<i class="fa-solid fa-plus"></i> Pemilik Lama — Hewan Baru <span class="opacity-75 font-normal">· Estimasi ID: ' + formatIdHewan(window.NEXT_ID_HEWAN) + '</span>';
+        
         showPatientCard();
         resetFilterPelayanan();
         toggleAlamatMode();
@@ -216,7 +224,8 @@ document.addEventListener('DOMContentLoaded', function() {
         clearFields(hewanFields);
         setFieldsState([...pemilikFields, ...hewanFields], false);
 
-        patientCardStatus.innerHTML = '<i class="fa-solid fa-user-plus"></i> Pendaftaran Baru';
+        patientCardStatus.innerHTML = '<i class="fa-solid fa-user-plus"></i> Pendaftaran Baru <span class="opacity-75 font-normal">· Estimasi ID: ' + formatIdHewan(window.NEXT_ID_HEWAN) + '</span>';
+        
         showPatientCard();
         resetFilterPelayanan();
         toggleAlamatMode();
@@ -344,6 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if(jenisHewanSelect) jenisHewanSelect.addEventListener('change', filterPelayanan);
     if(jenisKelaminSelect) jenisKelaminSelect.addEventListener('change', filterPelayanan);
 
+    // ===== Multi-select searchable (Anamnesa & Terapi/Obat) + dukungan "Lain-lain" =====
     function initMultiSelect(containerId, inputName) {
         const container = document.getElementById(containerId);
         if(!container) return { reset: () => {} };
@@ -354,27 +364,32 @@ document.addEventListener('DOMContentLoaded', function() {
         const hiddenWrap = container.querySelector('.ms-hidden');
         const tableBody = container.querySelector('.ms-tbody');
         const emptyRow = container.querySelector('.ms-empty');
+        const lainInput = container.querySelector('.ms-lain-input');
+        const lainAddBtn = container.querySelector('.ms-lain-add');
         const selected = new Set();
 
         function updateEmptyRow() {
             emptyRow.classList.toggle('hidden', selected.size > 0);
         }
 
-        function addItem(id, name) {
+        // isCustom = true untuk entri "Lain-lain" (nama baru yang diketik manual, belum ada di master data).
+        // Entri custom dikirim lewat field terpisah (mis. anamnesa_lain[]) berisi TEKS, bukan ID,
+        // supaya backend bisa membuatkan data barunya di tabel master sebelum disimpan ke rekam medis.
+        function addItem(id, name, isCustom = false) {
             if (selected.has(id)) return;
             selected.add(id);
 
             const hidden = document.createElement('input');
             hidden.type = 'hidden';
-            hidden.name = inputName;
-            hidden.value = id;
+            hidden.name = isCustom ? inputName.replace('[]', '_lain[]') : inputName;
+            hidden.value = isCustom ? name : id;
             hidden.dataset.id = id;
             hiddenWrap.appendChild(hidden);
 
             const row = document.createElement('tr');
             row.dataset.id = id;
             row.innerHTML = `
-                <td class="p-3 text-gray-800 dark:text-gray-200 text-sm">${name}</td>
+                <td class="p-3 text-gray-800 dark:text-gray-200 text-sm">${name}${isCustom ? ' <span class="text-[10px] uppercase tracking-wide text-brand-primary dark:text-brand-light font-semibold ml-1">Baru</span>' : ''}</td>
                 <td class="p-3 w-10 text-center">
                     <button type="button" class="ms-remove-btn text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors">
                         <i class="fa-solid fa-xmark"></i>
@@ -400,12 +415,30 @@ document.addEventListener('DOMContentLoaded', function() {
             updateEmptyRow();
         }
 
+        function addCustom() {
+            if (!lainInput) return;
+            const name = lainInput.value.trim();
+            if (!name) return;
+            const customId = 'custom-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
+            addItem(customId, name, true);
+            lainInput.value = '';
+            lainInput.focus();
+        }
+
+        if (lainAddBtn) lainAddBtn.addEventListener('click', addCustom);
+        if (lainInput) {
+            lainInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); addCustom(); }
+            });
+        }
+
         function reset() {
             selected.clear();
             hiddenWrap.innerHTML = '';
             tableBody.querySelectorAll('tr:not(.ms-empty)').forEach(r => r.remove());
             options.forEach(o => o.classList.remove('hidden'));
             searchBox.value = '';
+            if (lainInput) lainInput.value = '';
             dropdown.classList.add('hidden');
             updateEmptyRow();
         }
@@ -448,6 +481,90 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const anamnesaMS = initMultiSelect('anamnesaMultiSelect', 'anamnesa[]');
     const obatMS = initMultiSelect('obatMultiSelect', 'terapi[]');
+
+    // ===== Single-select searchable (Diagnosa) + dukungan "Lain-lain" =====
+    function initSingleSelect(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return { reset: () => {} };
+
+        const searchBox = container.querySelector('.ss-search');
+        const dropdown = container.querySelector('.ss-dropdown');
+        const hiddenInput = container.querySelector('.ss-hidden');
+        const badge = container.querySelector('.ss-badge'); // Ambil elemen badge BARU
+        
+        const lainInput = container.querySelector('.ss-lain-input');
+        const lainAddBtn = container.querySelector('.ss-lain-add');
+        const options = Array.from(dropdown.querySelectorAll('.ss-option'));
+
+        function selectOption(id, name) {
+            hiddenInput.value = id;
+            searchBox.value = name; // Teks utama tampil polos tanpa embel-embel
+            
+            // Munculkan badge BARU kalau opsi "lainlain"
+            if (id === 'lainlain') {
+                if (badge) badge.classList.remove('hidden');
+            } else {
+                if (lainInput) lainInput.value = ''; 
+                if (badge) badge.classList.add('hidden');
+            }
+            
+            dropdown.classList.add('hidden');
+            options.forEach(o => o.classList.remove('hidden'));
+        }
+
+        function addCustom() {
+            if (!lainInput) return;
+            const name = lainInput.value.trim();
+            if (!name) return;
+            
+            selectOption('lainlain', name);
+        }
+
+        if (lainAddBtn) lainAddBtn.addEventListener('click', addCustom);
+        if (lainInput) {
+            lainInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); addCustom(); }
+            });
+            lainInput.addEventListener('click', (e) => e.stopPropagation());
+        }
+
+        options.forEach(btn => {
+            btn.addEventListener('click', () => selectOption(btn.dataset.id, btn.dataset.name));
+        });
+
+        searchBox.addEventListener('input', () => {
+            const q = searchBox.value.trim().toLowerCase();
+            dropdown.classList.remove('hidden');
+            
+            if (badge) badge.classList.add('hidden'); // Sembunyikan badge saat user mulai ngetik ulang
+            
+            options.forEach(btn => {
+                const match = btn.dataset.name.toLowerCase().includes(q);
+                btn.classList.toggle('hidden', !match);
+            });
+        });
+
+        searchBox.addEventListener('focus', () => {
+            dropdown.classList.remove('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!container.contains(e.target)) dropdown.classList.add('hidden');
+        });
+
+        function reset() {
+            hiddenInput.value = '';
+            searchBox.value = '';
+            if (lainInput) lainInput.value = '';
+            if (badge) badge.classList.add('hidden'); // Sembunyikan badge saat direset
+            options.forEach(o => o.classList.remove('hidden'));
+            dropdown.classList.add('hidden');
+        }
+
+        return { reset };
+    }
+
+    const diagnosaSS = initSingleSelect('diagnosaSingleSelect');
 
     async function handleSimpan(e) {
         e.preventDefault();
@@ -494,6 +611,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     anamnesaMS.reset();
                     obatMS.reset();
+                    diagnosaSS.reset();
                     
                     document.getElementById('tanggal').valueAsDate = new Date();
                     document.getElementById('retribusi').value = '0';
