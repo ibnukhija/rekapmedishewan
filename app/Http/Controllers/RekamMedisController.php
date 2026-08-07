@@ -11,15 +11,19 @@ use App\Models\Dokter;
 use App\Models\Paramedis;
 use App\Models\Pelayanan;
 use App\Models\JenisHewan;
-use App\Exports\RekapLaporanExport;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Diagnosa;
 use App\Models\Anamnesa;
 use App\Models\Obat;
+use App\Exports\RekapLaporanExport;
+use App\Exports\RekapLaporanExport2;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RekamMedisController extends Controller
 {
+    /**
+     * Rapikan alamat sebelum disimpan supaya grouping di modul Surveilans konsisten.
+     */
     private function normalizeAlamat(?string $alamat): string
     {
         $alamat = trim($alamat ?? '');
@@ -32,6 +36,9 @@ class RekamMedisController extends Controller
         return mb_convert_case($alamat, MB_CASE_TITLE, 'UTF-8');
     }
 
+    /**
+     * Rapikan nama yang diketik manual lewat opsi "Lain-lain" (diagnosa/anamnesa/obat)
+     */
     private function normalizeNamaMaster(string $nama): string
     {
         $nama = trim(preg_replace('/\s+/', ' ', $nama));
@@ -50,15 +57,13 @@ class RekamMedisController extends Controller
         $anamnesas = Anamnesa::orderBy('nama_anamnesa')->get();
         $diagnosas = Diagnosa::orderBy('nama_diagnosa')->get();
         $obats = Obat::orderBy('nama_obat')->get();
-        
-        // Ambil ID Hewan terbesar di database, lalu tambah 1
+
+        // Ambil ID Hewan terbesar di database, lalu tambah 1 untuk estimasi ID
         $nextIdHewan = \App\Models\Hewan::max('id_hewan') + 1;
-        
-        // Memastikan nextIdHewan tidak kosong (misal database masih kosong, mulai dari 1)
         if (!$nextIdHewan) {
             $nextIdHewan = 1;
         }
-
+        
         return view('rekam_medis.input', compact(
             'dokters', 
             'paramedis', 
@@ -168,7 +173,7 @@ class RekamMedisController extends Controller
                 ]);
             }
 
-            // 3. Tentukan Diagnosa (Mendukung "Lain-lain")
+            // 3. Tentukan Diagnosa -- termasuk dukungan "Lain-lain"
             $id_diagnosa = null;
             if ($request->diagnosa === 'lainlain') {
                 if ($request->filled('diagnosa_lain')) {
@@ -192,7 +197,7 @@ class RekamMedisController extends Controller
                 'no_karcis' => $request->no_karcis ?? '-'
             ]);
 
-            // 5. Simpan ke Tabel Pivot Anamnesa (Mendukung "Lain-lain")
+            // 5. Simpan ke Tabel Pivot (Anamnesa), termasuk entri "Lain-lain"
             $anamnesaIds = $request->input('anamnesa', []);
             if (!is_array($anamnesaIds)) {
                 $anamnesaIds = [$anamnesaIds];
@@ -200,8 +205,9 @@ class RekamMedisController extends Controller
             if ($request->filled('anamnesa_lain')) {
                 foreach ($request->input('anamnesa_lain', []) as $namaBaru) {
                     $namaBaru = $this->normalizeNamaMaster($namaBaru);
-                    if ($namaBaru === '') continue;
-                    
+                    if ($namaBaru === '') {
+                        continue;
+                    }
                     $anamnesaBaru = Anamnesa::firstOrCreate(['nama_anamnesa' => $namaBaru]);
                     $anamnesaIds[] = $anamnesaBaru->id_anamnesa;
                 }
@@ -210,7 +216,7 @@ class RekamMedisController extends Controller
                 $rekamMedis->anamnesas()->attach(array_unique($anamnesaIds));
             }
 
-            // 6. Simpan ke Tabel Pivot Terapi/Obat (Mendukung "Lain-lain")
+            // 6. Simpan ke Tabel Pivot (Terapi/Obat), termasuk entri "Lain-lain"
             $terapiIds = $request->input('terapi', []);
             if (!is_array($terapiIds)) {
                 $terapiIds = [$terapiIds];
@@ -218,8 +224,9 @@ class RekamMedisController extends Controller
             if ($request->filled('terapi_lain')) {
                 foreach ($request->input('terapi_lain', []) as $namaBaru) {
                     $namaBaru = $this->normalizeNamaMaster($namaBaru);
-                    if ($namaBaru === '') continue;
-
+                    if ($namaBaru === '') {
+                        continue;
+                    }
                     $obatBaru = Obat::firstOrCreate(['nama_obat' => $namaBaru]);
                     $terapiIds[] = $obatBaru->id_obat;
                 }
@@ -237,6 +244,9 @@ class RekamMedisController extends Controller
         }
     }
 
+    /**
+     * Data Utama untuk Laporan
+     */
     public function rekapLaporan(Request $request)
     {
         $dokters = Dokter::orderBy('nama_dokter')->get();
@@ -359,12 +369,10 @@ class RekamMedisController extends Controller
         ));
     }
 
-    public function exportRekapLaporan(Request $request)
-    {
-        return Excel::download(new RekapLaporanExport($request->all()), 'rekap-laporan-' . now()->format('Ymd_His') . '.xlsx');
-    }
-    
-    public function cetakRekapLaporan(Request $request)
+    /**
+     * Resolusi Data untuk Filter Export
+     */
+    private function resolveRekapLaporanViewData(Request $request): array
     {
         $search = $request->filled('search') ? $request->search : $request->q;
         $dokter = $request->filled('id_dokter') ? $request->id_dokter : $request->dokter;
@@ -464,19 +472,75 @@ class RekamMedisController extends Controller
             $filterInfo['Jenis Kelamin'] = $jenisKelamin;
         }
 
+        return compact('rekapData', 'filterInfo', 'totalEntri', 'totalRetribusi', 'totalHewanUnik');
+    }
+
+    /**
+     * Group of Export Methods
+     */
+    public function exportRekapLaporan(Request $request)
+    {
+        return Excel::download(new RekapLaporanExport($request->all()), 'rekap-laporan-' . now()->format('Ymd_His') . '.xlsx');
+    }
+
+    public function exportRekapLaporanView(Request $request)
+    {
+        $exportData = $this->resolveRekapLaporanViewData($request);
+
+        return Excel::download(
+            new RekapLaporanExport2(
+                $exportData['rekapData'],
+                $exportData['filterInfo'],
+                $exportData['totalEntri'],
+                $exportData['totalRetribusi'],
+                $exportData['totalHewanUnik']
+            ),
+            'rekap-laporan-baru-' . now()->format('Ymd_His') . '.xlsx'
+        );
+    }
+    
+    public function cetakRekapLaporan(Request $request)
+    {
+        $exportData = $this->resolveRekapLaporanViewData($request);
+
         $pdf = Pdf::setOptions(['isPhpEnabled' => true])
-            ->loadView('export.pdf_rekap_laporan', compact(
-                'rekapData',
-                'totalEntri',
-                'totalRetribusi',
-                'totalHewanUnik',
-                'filterInfo'
-            ))
+            ->loadView('export.pdf_rekap_laporan', [
+                'rekapData' => $exportData['rekapData'],
+                'totalEntri' => $exportData['totalEntri'],
+                'totalRetribusi' => $exportData['totalRetribusi'],
+                'totalHewanUnik' => $exportData['totalHewanUnik'],
+                'filterInfo' => $exportData['filterInfo'],
+            ])
             ->setPaper('a4', 'landscape');
 
         return response($pdf->output(), 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="rekap-laporan-' . now()->format('Ymd_His') . '.pdf"',
+        ]);
+    }
+
+    public function cetakRekapLaporan2(Request $request)
+    {
+        $exportData = $this->resolveRekapLaporanViewData($request);
+
+        $export = new RekapLaporanExport2(
+            $exportData['rekapData'],
+            $exportData['filterInfo'],
+            $exportData['totalEntri'],
+            $exportData['totalRetribusi'],
+            $exportData['totalHewanUnik']
+        );
+
+        $pdf = Pdf::setOptions(['isPhpEnabled' => true])
+            ->loadView('export.pdf_rekap_laporan2', [
+                'summaryRows' => $export->getSummaryRows(),
+                'filterInfo' => $exportData['filterInfo'],
+            ])
+            ->setPaper('a4', 'landscape');
+
+        return response($pdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="rekap-laporan-2-' . now()->format('Ymd_His') . '.pdf"',
         ]);
     }
 }
