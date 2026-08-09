@@ -96,6 +96,11 @@
                 <i class="fa-solid fa-users-gear w-5 text-center flex-shrink-0 group-hover:text-brand-primary dark:group-hover:text-brand-light transition-colors"></i>
                 <span class="menu-text whitespace-nowrap">Kelola Akun</span>
             </a>
+
+            <a href="{{ route('admin.api-tokens.index') }}" class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group {{ request()->routeIs('admin.api-tokens.*') ? 'bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-light font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' }}">
+                <i class="fa-solid fa-key w-5 text-center flex-shrink-0 group-hover:text-brand-primary dark:group-hover:text-brand-light transition-colors"></i>
+                <span class="menu-text whitespace-nowrap">Token API</span>
+            </a>
         @endif
         <!-- AKHIR AREA ADMIN -->
 

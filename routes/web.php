@@ -13,6 +13,7 @@ use App\Http\Controllers\DiagnosaController;
 use App\Http\Controllers\AnamnesaController;
 use App\Http\Controllers\SurveilansController;
 use App\Http\Controllers\ObatController;
+use App\Http\Controllers\Admin\ApiTokenController;
 
 Route::redirect('/', '/login');
 // Route untuk Halaman Auth
@@ -69,6 +70,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/rekap-laporan/export-view', [RekamMedisController::class, 'exportRekapLaporanView'])->name('rekap-laporan.export-view');
         Route::get('/rekap-laporan/pdf', [RekamMedisController::class, 'cetakRekapLaporan'])->name('rekap-laporan.pdf');
         Route::get('/rekap-laporan/pdf2', [RekamMedisController::class, 'cetakRekapLaporan2'])->name('rekap-laporan.pdf2');
+
+        Route::get('/api-tokens', [ApiTokenController::class, 'index'])->name('admin.api-tokens.index');
+        Route::post('/api-tokens', [ApiTokenController::class, 'store'])->name('admin.api-tokens.store');
+        Route::delete('/api-tokens/{id}', [ApiTokenController::class, 'destroy'])->name('admin.api-tokens.destroy');
     });
 });
 
