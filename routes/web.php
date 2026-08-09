@@ -23,7 +23,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // Route untuk Halaman yang Membutuhkan Login (Auth Umum)
-Route::middleware('auth')->group(function () {
+Route::middleware('auth','nocache')->group(function () {
     
     // DIAKSES ADMIN & OPERATOR
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

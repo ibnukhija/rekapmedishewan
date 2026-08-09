@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role'    => \App\Http\Middleware\RoleMiddleware::class,
             'api.key' => \App\Http\Middleware\VerifyApiKey::class,
+            'nocache' => \App\Http\Middleware\PreventBackHistory::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
