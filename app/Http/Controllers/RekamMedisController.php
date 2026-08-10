@@ -498,6 +498,35 @@ class RekamMedisController extends Controller
             'rekap-laporan-baru-' . now()->format('Ymd_His') . '.xlsx'
         );
     }
+
+    // Halaman tampilan Rekapitulasi (tabel bulanan) di browser, terpisah dari halaman Rekap Laporan (list mentah)
+    public function rekapitulasi(Request $request)
+    {
+        $exportData = $this->resolveRekapLaporanViewData($request);
+
+        $export = new RekapLaporanExport2(
+            $exportData['rekapData'],
+            $exportData['filterInfo'],
+            $exportData['totalEntri'],
+            $exportData['totalRetribusi'],
+            $exportData['totalHewanUnik']
+        );
+
+        $minYear = RekamMedis::query()
+            ->selectRaw('MIN(YEAR(tanggal)) as year')
+            ->value('year');
+        $minYear = $minYear ? (int) $minYear : now()->year;
+        $years = range(now()->year, $minYear);
+
+        return view('data_master.rekapitulasi', [
+            'summaryRows' => $export->getSummaryRows(),
+            'filterInfo' => $exportData['filterInfo'],
+            'totalEntri' => $exportData['totalEntri'],
+            'totalRetribusi' => $exportData['totalRetribusi'],
+            'totalHewanUnik' => $exportData['totalHewanUnik'],
+            'years' => $years,
+        ]);
+    }
     
     public function cetakRekapLaporan(Request $request)
     {

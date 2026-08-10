@@ -171,7 +171,7 @@
     <table width="100%" style="border:none; margin-top:8px;">
         <tr>
             <td style="border:none; width:33%; text-align:left; font-size:9px; font-style:italic;">
-                Dicetak oleh: {{ auth()->user()->name ?? 'Admin' }}
+                Dicetak oleh: {{ auth()->user()->nama ?? 'Admin' }}
             </td>
             <td style="border:none; width:34%; text-align:center; font-size:9px; font-style:italic;">
                 Dinas Ketahanan Pangan dan Pertanian

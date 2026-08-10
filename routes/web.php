@@ -66,6 +66,7 @@ Route::middleware('auth','nocache')->group(function () {
             ->except(['show', 'create', 'edit']);
 
         Route::get('/rekap-laporan', [RekamMedisController::class, 'rekapLaporan'])->name('rekap-laporan.index');
+        Route::get('/rekap-laporan/rekapitulasi', [RekamMedisController::class, 'rekapitulasi'])->name('rekap-laporan.rekapitulasi');
         Route::get('/rekap-laporan/export', [RekamMedisController::class, 'exportRekapLaporan'])->name('rekap-laporan.export');
         Route::get('/rekap-laporan/export-view', [RekamMedisController::class, 'exportRekapLaporanView'])->name('rekap-laporan.export-view');
         Route::get('/rekap-laporan/pdf', [RekamMedisController::class, 'cetakRekapLaporan'])->name('rekap-laporan.pdf');
@@ -76,4 +77,3 @@ Route::middleware('auth','nocache')->group(function () {
         Route::delete('/api-tokens/{id}', [ApiTokenController::class, 'destroy'])->name('admin.api-tokens.destroy');
     });
 });
-
