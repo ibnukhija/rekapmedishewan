@@ -1,6 +1,11 @@
+@php
+    $selectedYear = request('year') ?: request('tahun');
+    $reportYear = $selectedYear
+        ?: (request('start_date') ? \Carbon\Carbon::parse(request('start_date'))->year : (request('end_date') ? \Carbon\Carbon::parse(request('end_date'))->year : date('Y')));
+@endphp
 <table style="border-collapse: collapse; font-family: Calibri, Arial, sans-serif; font-size: 11px;">
     <tr>
-        <td colspan="20" style="font-weight:bold; font-size:16px; text-align:center;">REKAPITULASI SETORAN RETRIBUSI TAHUN {{ request('start_date') ? \Carbon\Carbon::parse(request('start_date'))->format('Y') : date('Y') }}</td>
+        <td colspan="20" style="font-weight:bold; font-size:16px; text-align:center;">REKAPITULASI SETORAN RETRIBUSI TAHUN {{ $reportYear }}</td>
     </tr>
     <tr>
         <td colspan="20" style="font-weight:bold; text-align:center;">PERIODE {{ request('start_date') ? \Carbon\Carbon::parse(request('start_date'))->format('d F Y') : '01 JANUARI' }} SAMPAI DENGAN {{ request('end_date') ? \Carbon\Carbon::parse(request('end_date'))->format('d F Y') : '31 DESEMBER' }}</td>
@@ -15,7 +20,7 @@
         <td colspan="20"></td>
     </tr>
     <tr>
-        <td colspan="20" style="font-weight:bold;">Filter yang diterapkan</td>
+        <td colspan="20" style="font-weight:bold;">Filter :</td>
     </tr>
     @if(count($filterInfo) > 0)
         @foreach($filterInfo as $label => $value)

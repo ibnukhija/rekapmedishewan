@@ -249,6 +249,10 @@ class RekamMedisController extends Controller
      */
     public function rekapLaporan(Request $request)
     {
+        if (!$request->exists('year') && !$request->exists('tahun') && !$request->filled('start_date') && !$request->filled('end_date')) {
+            $request->merge(['year' => now()->year]);
+        }
+
         $dokters = Dokter::orderBy('nama_dokter')->get();
         $jenisHewans = JenisHewan::orderBy('nama_jenis')->get();
         $pelayanans = Pelayanan::with('jenisHewan')
@@ -374,6 +378,10 @@ class RekamMedisController extends Controller
      */
     private function resolveRekapLaporanViewData(Request $request): array
     {
+        if (!$request->exists('year') && !$request->exists('tahun') && !$request->filled('start_date') && !$request->filled('end_date')) {
+            $request->merge(['year' => now()->year]);
+        }
+
         $search = $request->filled('search') ? $request->search : $request->q;
         $dokter = $request->filled('id_dokter') ? $request->id_dokter : $request->dokter;
         $jenisHewan = $request->filled('id_jenis') ? $request->id_jenis : $request->jenis_hewan;
