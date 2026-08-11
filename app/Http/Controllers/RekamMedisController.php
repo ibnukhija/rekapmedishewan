@@ -480,7 +480,7 @@ class RekamMedisController extends Controller
      */
     public function exportRekapLaporan(Request $request)
     {
-        return Excel::download(new RekapLaporanExport($request->all()), 'rekap-laporan-' . now()->format('Ymd_His') . '.xlsx');
+        return Excel::download(new RekapLaporanExport($request->all()), 'laporan-rekam_medis-' . now()->format('Ymd_His') . '.xlsx');
     }
 
     public function exportRekapLaporanView(Request $request)
@@ -495,7 +495,7 @@ class RekamMedisController extends Controller
                 $exportData['totalRetribusi'],
                 $exportData['totalHewanUnik']
             ),
-            'rekap-laporan-baru-' . now()->format('Ymd_His') . '.xlsx'
+            'rekapitulasi-rekam_medis-' . now()->format('Ymd_His') . '.xlsx'
         );
     }
 
@@ -544,7 +544,7 @@ class RekamMedisController extends Controller
 
         return response($pdf->output(), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="rekap-laporan-' . now()->format('Ymd_His') . '.pdf"',
+            'Content-Disposition' => 'inline; filename="laporan-rekam_medis-' . now()->format('Ymd_His') . '.pdf"',
         ]);
     }
 
@@ -569,7 +569,7 @@ class RekamMedisController extends Controller
 
         return response($pdf->output(), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="rekap-laporan-2-' . now()->format('Ymd_His') . '.pdf"',
+            'Content-Disposition' => 'inline; filename="rekapitulasi-rekam_medis-' . now()->format('Ymd_His') . '.pdf"',
         ]);
     }
 }
