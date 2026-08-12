@@ -1,18 +1,20 @@
 <?php
 
-use App\Http\Controllers\Api\AuthTokenController;
+use App\Http\Controllers\Api\AuthApiController;
 use App\Http\Controllers\Api\SurveilansApiController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->group(function () {
+// Login tidak diproteksi sanctum (di sinilah token didapat), tapi tetap dibatasi rate limit
+Route::middleware('throttle:10,1')->group(function () {
+    Route::post('/login', [AuthApiController::class, 'login']);
+});
 
-    // Endpoint generate token 
-    Route::post('/token', [AuthTokenController::class, 'generate'])->middleware('throttle:5,1');
+// Semua route di bawah ini WAJIB kirim header: Authorization: Bearer <token>
+Route::middleware(['throttle:60,1', 'auth:sanctum'])->group(function () {
+    Route::post('/logout', [AuthApiController::class, 'logout']);
+    Route::get('/me', [AuthApiController::class, 'me']);
 
-    // Endpoint butuh token 
-    Route::middleware(['throttle:60,1', 'auth:sanctum'])->group(function () {
+    Route::prefix('v1')->group(function () {
         Route::get('/surveilans', [SurveilansApiController::class, 'index']);
-        Route::post('/token/revoke', [AuthTokenController::class, 'revoke']);
-        Route::get('/token/list', [AuthTokenController::class, 'listTokens']);
     });
 });
