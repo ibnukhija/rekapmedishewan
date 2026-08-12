@@ -100,7 +100,7 @@
     <table width="100%" style="border:none; margin-bottom:14px;">
         <tr>
             <td style="border:none; width:55%; vertical-align:top; font-size:11px;">
-                <strong>Filter yang diterapkan:</strong><br>
+                <strong>Filter :</strong><br>
                 @forelse($filterInfo as $label => $value)
                     {{ $label }} : {{ $value }}<br>
                 @empty
