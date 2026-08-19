@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
             [
                 'nama' => 'Administrator',
                 'username' => 'admin',
-                'password' => Hash::make('admin123'),
+                'password' => Hash::make('Admin123#'),
                 'role' => 'admin',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
             [
                 'nama' => 'Operator Klinik',
                 'username' => 'operator',
-                'password' => Hash::make('operator123'),
+                'password' => Hash::make('Operator123#'),
                 'role' => 'operator',
                 'created_at' => now(),
                 'updated_at' => now(),
