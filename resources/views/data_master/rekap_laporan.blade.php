@@ -1,10 +1,37 @@
 @extends('layouts.app')
 
-@section('title', 'Rekap Laporan - S-ALPUKAT')
+@section('title', 'Rekap Laporan - SALPUKAT')
 @section('page_title', 'Rekapitulasi Laporan')
 
 @section('content')
 <div class="flex-1 flex flex-col space-y-4 max-w-[1600px] mx-auto w-full">
+
+    <!-- Alert Success -->
+    @if(session('success'))
+    <div id="alert-success" class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-md shadow-sm mb-2 flex justify-between items-center transition-opacity duration-500">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-check-circle"></i>
+            <p class="text-sm font-medium">{{ session('success') }}</p>
+        </div>
+        <button onclick="closeAlert('alert-success')" class="text-green-600 hover:text-green-800 focus:outline-none px-2">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    @endif
+
+    <!-- Alert Error -->
+    @if(session('error'))
+    <div id="alert-error" class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-sm mb-2 flex justify-between items-center transition-opacity duration-500">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <p class="text-sm font-medium">{{ session('error') }}</p>
+        </div>
+        <button onclick="closeAlert('alert-error')" class="text-red-600 hover:text-red-800 focus:outline-none px-2">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    @endif
+
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-5">
         <form method="GET" action="{{ route('rekap-laporan.index') }}">
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 w-full">
@@ -193,6 +220,7 @@
                         <th class="px-5 py-4 font-semibold border-b border-brand-dark/50 min-w-[150px]">Terapi</th>
                         <th class="px-5 py-4 font-semibold border-b border-brand-dark/50">No. Karcis</th>
                         <th class="px-5 py-4 font-semibold border-b border-brand-dark/50 text-right">Retribusi</th>
+                        <th class="px-5 py-4 font-semibold border-b border-brand-dark/50 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -205,7 +233,7 @@
                                 $tanggal = $tanggal->setTime($item->created_at->hour, $item->created_at->minute, $item->created_at->second);
                             }
                         @endphp
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                        <tr class="group hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                             <td class="px-5 py-3">{{ $tanggal->translatedFormat('Y/m/d H:i:s') }}</td>
                             <td class="px-5 py-3 font-medium text-gray-900 dark:text-white">{{ $item->hewan?->pemilik?->nama_pemilik ?? '-' }}</td>
                             <td class="px-5 py-3 truncate max-w-[200px]" title="{{ $item->hewan?->pemilik?->alamat ?? '-' }}">{{ $item->hewan?->pemilik?->alamat ?? '-' }}</td>
@@ -220,10 +248,23 @@
                             <td class="px-5 py-3 truncate max-w-[200px]" title="{{ $obatList ?: '-' }}">{{ $obatList ?: '-' }}</td>
                             <td class="px-5 py-3 font-mono text-xs">{{ $item->no_karcis ?? '-' }}</td>
                             <td class="px-5 py-3 text-right font-medium text-gray-900 dark:text-white">{{ number_format($item->pelayanan?->tarif ?? 0, 0, ',', '.') }}</td>
+                            <td class="px-5 py-3 text-center">
+                                <div class="flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <form action="{{ route('rekam-medis.destroy', $item->id_rekam) }}" method="POST" class="inline-block m-0 p-0">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="confirmDelete(this)"
+                                            class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 flex items-center justify-center transition-colors"
+                                            title="Hapus">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="14" class="px-5 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data rekam medis.</td>
+                            <td colspan="15" class="px-5 py-8 text-center text-gray-500 dark:text-gray-400">Belum ada data rekam medis.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -292,5 +333,52 @@
             toggleFilterModal(false);
         }
     });
+
+    // --- Alert success/error (pola sama seperti halaman master data lain) ---
+    function closeAlert(elementId) {
+        const alertElement = document.getElementById(elementId);
+        if (alertElement) {
+            alertElement.style.opacity = '0';
+            setTimeout(() => { alertElement.style.display = 'none'; }, 500);
+        }
+    }
+    if (document.getElementById('alert-success')) {
+        setTimeout(() => closeAlert('alert-success'), 2000);
+    }
+    if (document.getElementById('alert-error')) {
+        setTimeout(() => closeAlert('alert-error'), 2000);
+    }
+
+    // --- Konfirmasi hapus rekam medis(SweetAlert)
+    function confirmDelete(button) {
+        Swal.fire({
+            title: 'Apakah Anda Yakin?',
+            text: "Data rekam medis yang dihapus tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: '<i class="fa-solid fa-trash mr-1"></i> Ya, Hapus!',
+            cancelButtonText: '<i class="fa-solid fa-xmark mr-1"></i> Batal',
+            background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
+            color: document.documentElement.classList.contains('dark') ? '#f3f4f6' : '#111827',
+            customClass: {
+                popup: 'rounded-2xl shadow-2xl',
+                confirmButton: 'px-5 py-2.5 rounded-xl font-medium tracking-wide',
+                cancelButton: 'px-5 py-2.5 rounded-xl font-medium tracking-wide'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Menghapus...',
+                    text: 'Mohon tunggu sebentar',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => { Swal.showLoading(); }
+                });
+                button.closest('form').submit();
+            }
+        });
+    }
 </script>
 @endpush

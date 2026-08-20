@@ -578,6 +578,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const originalContent = btn.innerHTML;
         const formData = new FormData(form);
         
+        const noKarcisInput = document.getElementById('no_karcis');
+        if (noKarcisInput) noKarcisInput.classList.remove('border-red-500');
+        
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Menyimpan...</span>';
         btn.disabled = true;
         btn.classList.add('opacity-80', 'cursor-not-allowed');
@@ -596,6 +599,28 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             const result = await response.json();
+            
+            // Validasi gagal (nomor karcis dobel)
+            if (response.status === 422 && result.errors) {
+                const pesanError = Object.values(result.errors).flat().join('<br>');
+ 
+                if (result.errors.no_karcis && noKarcisInput) {
+                    noKarcisInput.classList.add('border-red-500');
+                    noKarcisInput.focus();
+                }
+ 
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Data belum bisa disimpan',
+                    html: pesanError,
+                    confirmButtonColor: '#dc2626'
+                });
+ 
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+                btn.classList.remove('opacity-80', 'cursor-not-allowed');
+                return;
+            }
 
             if(response.ok && result.success) {
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>' + result.message + '</span>';

@@ -32,7 +32,7 @@ Route::middleware('auth','nocache')->group(function () {
     // Modul Transaksi (Akses Operator & Admin)
     Route::get('/rekam-medis/search', [RekamMedisController::class, 'search'])->name('rekam-medis.search');
     Route::get('/surveilans', [SurveilansController::class, 'index'])->name('surveilans.index');
-    // Standar resource controller
+
     Route::resource('rekam-medis', RekamMedisController::class);
 
     // HANYA BISA DIAKSES ADMIN ---
@@ -40,6 +40,9 @@ Route::middleware('auth','nocache')->group(function () {
         Route::resource('user', UserController::class)
             ->parameters(['user' => 'id_user'])
             ->except(['show', 'create', 'edit']);
+
+        Route::delete('/rekam-medis/{rekam_medis}', [RekamMedisController::class, 'destroy'])
+            ->name('rekam-medis.destroy');
 
         Route::resource('dokter', DokterController::class)
             ->except(['show', 'create', 'edit']);

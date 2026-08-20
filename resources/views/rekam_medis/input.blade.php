@@ -35,7 +35,7 @@
 
                     <!-- No. Karcis -->
                     <div class="space-y-1.5 lg:col-span-3">
-                        <label for="no_karcis" class="block text-sm font-medium text-gray-700 dark:text-gray-300">No. Karcis</label>
+                        <label for="no_karcis" class="block text-sm font-medium text-gray-700 dark:text-gray-300">No. Karcisc<span class="text-red-500">*</span></label>
                         <input type="text" id="no_karcis" name="no_karcis" placeholder="Nomor Karcis"
                             class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 focus:outline-none focus:border-brand-primary dark:focus:border-brand-light form-input-focus transition-colors text-sm">
                     </div>

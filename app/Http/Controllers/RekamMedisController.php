@@ -124,9 +124,13 @@ class RekamMedisController extends Controller
             'jenis_kelamin' => 'required',
             'pelayanan' => 'required',
             'dokter' => 'required',
+            'no_karcis' => 'required|string|max:50|unique:rekam_medis,no_karcis',
             'diagnosa_lain' => 'nullable|string|max:100',
             'anamnesa_lain.*' => 'nullable|string|max:100',
             'terapi_lain.*' => 'nullable|string|max:100',
+        ], [
+            'no_karcis.required' => 'Nomor karcis wajib diisi.',
+            'no_karcis.unique' => 'Nomor karcis ini sudah dipakai sebelumnya, silakan gunakan nomor lain.',
         ]);
 
         DB::beginTransaction();
@@ -194,7 +198,7 @@ class RekamMedisController extends Controller
                 'id_pelayanan' => $request->pelayanan,
                 'id_diagnosa' => $id_diagnosa,
                 'tanggal' => $request->tanggal,
-                'no_karcis' => $request->no_karcis ?? '-'
+                'no_karcis' => $request->no_karcis
             ]);
 
             // 5. Simpan ke Tabel Pivot (Anamnesa), termasuk entri "Lain-lain"
@@ -242,6 +246,18 @@ class RekamMedisController extends Controller
             DB::rollBack();
             return response()->json(['success' => false, 'message' => 'Gagal menyimpan: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function destroy($id_rekam)
+    {
+        $rekamMedis = RekamMedis::findOrFail($id_rekam);
+
+        $rekamMedis->anamnesas()->detach();
+        $rekamMedis->obats()->detach();
+
+        $rekamMedis->delete();
+
+        return redirect()->back()->with('success', 'Data rekam medis berhasil dihapus.');
     }
 
     /**

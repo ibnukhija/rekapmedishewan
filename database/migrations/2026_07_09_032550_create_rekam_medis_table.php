@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_diagnosa')->nullable(); 
             
             $table->date('tanggal');
-            $table->string('no_karcis', 30);
+            $table->string('no_karcis', 30)->unique();
             $table->timestamps();
 
             // Foreign Keys
